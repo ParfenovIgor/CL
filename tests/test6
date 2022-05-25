@@ -1,0 +1,14 @@
+import <math>;
+eval writeInt (math.abs 5);
+eval writeInt (math.abs (0 i- 5));
+
+def _ sum = fix (fun (_ f) {
+	ret fun (_ x) {
+		ret fun (_ y) {
+			ret if iszero y
+				then x
+				else (f (succ x) (pred y))
+		}
+	}
+});
+eval sum (succ succ succ $0) (succ succ $0);

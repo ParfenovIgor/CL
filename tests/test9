@@ -1,0 +1,5 @@
+def _ foo = uni X ~> fun (X x) { ret x };
+def _ boo = foo [Nat] succ $0;
+
+def _ apply = uni X ~> uni Y ~> fun (X x) { ret fun (X -> Y y) { ret y x }};
+def _ goo = apply [Nat] [Bool] succ $0 (fun (_ x) { ret iszero x});
