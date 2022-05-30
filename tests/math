@@ -1,5 +1,0 @@
-def _ math = {
-	abs = fun (_ x) {
-		ret if x i< 0 then 0 i- x else x
-	}
-};

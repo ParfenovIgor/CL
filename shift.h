@@ -53,8 +53,8 @@ void Shift_WriteReal        (Expr*, int);
 
 void Shift                  (Statement*, int);
 void Shift_Definition       (Statement*, int);
-void Shift_MoveAssignment   (Statement*, int);
-void Shift_CopyAssignment   (Statement*, int);
+void Shift_TypeDefinition   (Statement*, int);
+void Shift_Assignment       (Statement*, int);
 void Shift_IfStatement      (Statement*, int);
 void Shift_IfElseStatement  (Statement*, int);
 void Shift_Loop             (Statement*, int);
@@ -117,8 +117,14 @@ void Shift(Expr *expr, int shift) {
     if (dynamic_cast <Tuple*> (expr)) {
         Shift_Tuple(expr, shift); return;
     }
+    if (dynamic_cast <TupleGet*> (expr)) {
+        Shift_TupleGet(expr, shift); return;
+    }
     if (dynamic_cast <Record*> (expr)) {
         Shift_Record(expr, shift); return;
+    }
+    if (dynamic_cast <RecordGet*> (expr)) {
+        Shift_RecordGet(expr, shift); return;
     }
     if (dynamic_cast <Variant*> (expr)) {
         Shift_Variant(expr, shift); return;
@@ -229,7 +235,7 @@ void Shift_IsZero(Expr *expr, int shift) {
 }
 void Shift_Var(Expr *expr, int shift) {
     Var *var_ = dynamic_cast <Var*> (expr);
-    if (stoi_nl(var_->ident_) >= shift) {
+    if (is_nl(var_->ident_) && stoi_nl(var_->ident_) >= shift) {
         var_->ident_ = itos_nl(stoi_nl(var_->ident_) + 1);
     }
 }
@@ -270,7 +276,7 @@ void Shift_Dereference(Expr *expr, int shift) {
 }
 void Shift_Tuple(Expr *expr, int shift) {
     Tuple *tuple = dynamic_cast <Tuple*> (expr);
-    for (ListExpr::iterator i = tuple->listexpr_->begin() ; i != tuple->listexpr_->end() ; i++)
+    for (ListExpr::iterator i = tuple->listexpr_->begin(); i != tuple->listexpr_->end(); i++)
         Shift(*i, shift);
 }
 void Shift_TupleGet(Expr *expr, int shift) {
@@ -279,7 +285,7 @@ void Shift_TupleGet(Expr *expr, int shift) {
 }
 void Shift_Record(Expr *expr, int shift) {
     Record *record = dynamic_cast <Record*> (expr);
-    for (ListRecordField_::iterator i = record->listrecordfield__->begin() ; i != record->listrecordfield__->end() ; i++) {
+    for (ListRecordField_::iterator i = record->listrecordfield__->begin(); i != record->listrecordfield__->end(); i++) {
         RecordField *record_field = dynamic_cast <RecordField*> (*i);
         Shift(record_field->expr_, shift);
     }
@@ -412,11 +418,11 @@ void Shift(Statement *expr, int shift) {
     if (dynamic_cast <Definition*> (expr)) {
         Shift_Definition(expr, shift); return;
     }
-    if (dynamic_cast <MoveAssignment*> (expr)) {
-        Shift_MoveAssignment(expr, shift); return;
+    if (dynamic_cast <TypeDefinition*> (expr)) {
+        Shift_TypeDefinition(expr, shift); return;
     }
-    if (dynamic_cast <CopyAssignment*> (expr)) {
-        Shift_CopyAssignment(expr, shift); return;
+    if (dynamic_cast <Assignment*> (expr)) {
+        Shift_Assignment(expr, shift); return;
     }
     if (dynamic_cast <IfStatement*> (expr)) {
         Shift_IfStatement(expr, shift); return;
@@ -445,15 +451,11 @@ void Shift_Definition(Statement *expr, int shift) {
     Definition *definition = dynamic_cast <Definition*> (expr);
     Shift(definition->expr_, shift);
 }
-void Shift_MoveAssignment(Statement *expr, int shift) {
-    MoveAssignment *move_assignment = dynamic_cast <MoveAssignment*> (expr);
-    Shift(move_assignment->expr_1, shift);
-    Shift(move_assignment->expr_2, shift);
-}
-void Shift_CopyAssignment(Statement *expr, int shift) {
-    CopyAssignment *copy_assignment = dynamic_cast <CopyAssignment*> (expr);
-    Shift(copy_assignment->expr_1, shift);
-    Shift(copy_assignment->expr_2, shift);
+void Shift_TypeDefinition(Statement *expr, int shift) { }
+void Shift_Assignment(Statement *expr, int shift) {
+    Assignment *assignment = dynamic_cast <Assignment*> (expr);
+    Shift(assignment->expr_1, shift);
+    Shift(assignment->expr_2, shift);
 }
 void Shift_IfStatement(Statement *expr, int shift) {
     IfStatement *if_statement = dynamic_cast <IfStatement*> (expr);

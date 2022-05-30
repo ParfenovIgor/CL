@@ -1,29 +1,18 @@
 all: syntax interpreter
 
-pdf:	doc/Syntax/Normal.pdf
-
-doc/Syntax/Normal.pdf: doc/Syntax/Normal.tex
-	latexmk -output-directory=doc/Syntax/ -pdflatex doc/Syntax/Normal.tex
-
-doc/Syntax/Normal.tex: Syntax/Normal.cf
-	bnfc --latex Syntax/Normal.cf -o doc/Syntax/
-
 clean:
-	rm -rf Syntax/Normal
-	cd doc/Syntax && (latexmk -c; cd ../..)
+	rm -rf Syntax
 
-syntax: Syntax/Normal/TestNormal
-
-Syntax/Normal/TestNormal: Syntax/Normal.cf
-	mkdir -p Syntax/Normal/
-	cd Syntax/Normal/ && (bnfc -m --cpp ../Normal.cf; cd ../../)
-	cd Syntax/Normal/ && (make; cd ../../)
-
-update:
-	cd Syntax/Normal && (g++ Absyn.C -c)
+syntax: syntax.cf
+	mkdir -p Syntax/
+	cd Syntax/ && (bnfc -m --cpp ../syntax.cf; cd ../../)
+	cd Syntax/ && (make; cd ../../)
+	g++ fixer.cpp -o fixer
+	./fixer
+	cd Syntax && (g++ Absyn.C -c)
 
 interpreter: main.c
 	g++ main.c -c
-	g++ main.o Syntax/Normal/Absyn.o Syntax/Normal/Parser.o Syntax/Normal/Lexer.o Syntax/Normal/Printer.o -o cli
+	g++ main.o Syntax/Absyn.o Syntax/Buffer.o  Syntax/Lexer.o Syntax/Parser.o Syntax/Printer.o -o cli
 
 .PHONY: all clean

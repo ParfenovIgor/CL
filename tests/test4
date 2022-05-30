@@ -1,8 +1,0 @@
-def _ a = ref 1;
-loop {
-	eval writeInt *a;
-	if *a i= 10 {
-		break;
-	};
-	a <- *a i+ 1;
-};

@@ -1,6 +1,3 @@
-using ContextIE = std::vector < std::pair <Ident, Expr*> >;
-using ContextE = std::vector <Expr*>;
-
 void Evaluate                   (Expr*&, ContextIE&, ContextE&);
 void Evaluate_ProgramRoot       (ProgramRoot*&, ContextIE&, ContextE&);
 
@@ -13,9 +10,9 @@ void Evaluate_Pred              (Expr*&, ContextIE&, ContextE&);
 void Evaluate_IsZero            (Expr*&, ContextIE&, ContextE&);
 void Evaluate_Var               (Expr*&, ContextIE&, ContextE&);
 void Evaluate_Abstraction       (Expr*&, ContextIE&, ContextE&);
-void Evaluate_TypeApplication   (Expr*&, ContextIE&, ContextE&);
-void Evaluate_TypeAbstraction   (Expr*&, ContextIE&, ContextE&);
 void Evaluate_Application       (Expr*&, ContextIE&, ContextE&);
+void Evaluate_TypeAbstraction   (Expr*&, ContextIE&, ContextE&);
+void Evaluate_TypeApplication   (Expr*&, ContextIE&, ContextE&);
 void Evaluate_Fix               (Expr*&, ContextIE&, ContextE&);
 void Evaluate_Where             (Expr*&, ContextIE&, ContextE&);
 void Evaluate_Reference         (Expr*&, ContextIE&, ContextE&);
@@ -57,8 +54,8 @@ void Evaluate_WriteReal         (Expr*&, ContextIE&, ContextE&);
 
 void Evaluate                   (Statement*&, ContextIE&, ContextE&);
 void Evaluate_Definition        (Statement*&, ContextIE&, ContextE&);
-void Evaluate_MoveAssignment    (Statement*&, ContextIE&, ContextE&);
-void Evaluate_CopyAssignment    (Statement*&, ContextIE&, ContextE&);
+void Evaluate_TypeDefinition    (Statement*&, ContextIE&, ContextE&);
+void Evaluate_Assignment        (Statement*&, ContextIE&, ContextE&);
 void Evaluate_IfStatement       (Statement*&, ContextIE&, ContextE&);
 void Evaluate_IfElseStatement   (Statement*&, ContextIE&, ContextE&);
 void Evaluate_Loop              (Statement*&, ContextIE&, ContextE&);
@@ -69,10 +66,6 @@ void Evaluate_Eval              (Statement*&, ContextIE&, ContextE&);
 
 void Evaluate                   (ListStatement*&, ContextIE&, ContextE&);
 
-bool BreakFlag      = false;
-bool ContinueFlag   = false;
-bool ReturnFlag     = false;
-
 void Evaluate(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
     if (dynamic_cast <ConstTrue*> (expr)) {
         Evaluate_ConstTrue(expr, context_local, context_ref); return;
@@ -80,11 +73,11 @@ void Evaluate(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
     if (dynamic_cast <ConstFalse*> (expr)) {
         Evaluate_ConstFalse(expr, context_local, context_ref); return;
     }
-    if (dynamic_cast <If*> (expr)) {
-        Evaluate_If(expr, context_local, context_ref); return;
-    }
     if (dynamic_cast <ConstZero*> (expr)) {
         Evaluate_ConstZero(expr, context_local, context_ref); return;
+    }
+    if (dynamic_cast <If*> (expr)) {
+        Evaluate_If(expr, context_local, context_ref); return;
     }
     if (dynamic_cast <Succ*> (expr)) {
         Evaluate_Succ(expr, context_local, context_ref); return;
@@ -220,6 +213,10 @@ void Evaluate(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
     }
 }
 
+bool BreakFlag      = false;
+bool ContinueFlag   = false;
+bool ReturnFlag     = false;
+
 void Evaluate_ProgramRoot(ProgramRoot *&program_root, ContextIE &context_local, ContextE &context_ref) {
     for (ListStatement::iterator i = program_root->liststatement_->begin(); i != program_root->liststatement_->end(); i++) {
         Evaluate(*i, context_local, context_ref);
@@ -233,14 +230,10 @@ void Evaluate_If(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
     Evaluate(if_->expr_1, context_local, context_ref);
 
     if (dynamic_cast <ConstTrue*> (if_->expr_1)) {
-        Expr *result = if_->expr_2->clone();
-        // delete expr;
-        expr = result;
+        expr = if_->expr_2->clone();
     }
     else if (dynamic_cast <ConstFalse*> (if_->expr_1)) {
-        Expr *result = if_->expr_3->clone();
-        // delete expr;
-        expr = result;
+        expr = if_->expr_3->clone();
     }
 
     Evaluate(expr, context_local, context_ref);
@@ -249,43 +242,32 @@ void Evaluate_Succ(Expr *&expr, ContextIE &context_local, ContextE &context_ref)
     Succ *succ = dynamic_cast <Succ*> (expr);
     Evaluate(succ->expr_, context_local, context_ref);
     if (Pred *pred = dynamic_cast <Pred*> (succ->expr_)) {
-        Expr *result = pred->expr_->clone();
-        // delete expr;
-        expr = result;
+        expr = pred->expr_->clone();
     }
 }
 void Evaluate_Pred(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
     Pred *pred = dynamic_cast <Pred*> (expr);
     Evaluate(pred->expr_, context_local, context_ref);
     if (dynamic_cast <ConstZero*> (pred->expr_)) {
-        Expr *result = new ConstZero();
-        // delete expr;
-        expr = result;
+        expr = new ConstZero();
     }
     else if (Succ *succ = dynamic_cast <Succ*> (pred->expr_)) {
-        Expr *result = succ->expr_->clone();
-        // delete expr;
-        expr = result;
+        expr = succ->expr_->clone();
     }
 }
 void Evaluate_IsZero(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
     IsZero *is_zero = dynamic_cast <IsZero*> (expr);
     Evaluate(is_zero->expr_, context_local, context_ref);
     if (dynamic_cast <ConstZero*> (is_zero->expr_)) {
-        Expr *result = new ConstTrue();
-        // delete expr;
-        expr = result;
+        expr = new ConstTrue();
     }
     else {
-        Expr *result = new ConstFalse();
-        // delete expr;
-        expr = result;
+        expr = new ConstFalse();
     }
 }
 void Evaluate_Var(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
     Var *var_ = dynamic_cast <Var*> (expr);
     int pos = find_position_backward(context_local, var_->ident_);
-    // delete expr;
     expr = context_local[pos].second->clone();
 }
 void Evaluate_Abstraction(Expr *&expr, ContextIE &context_local, ContextE &context_ref) { }
@@ -303,14 +285,11 @@ void Evaluate_Application(Expr *&expr, ContextIE &context_local, ContextE &conte
             if (ReturnFlag)
                 break;
         }
-        Expr *expr_ = abstraction->expr_->clone();
+        expr = abstraction->expr_->clone();
         std::string str = itos_nl(0);
-        Substitute(expr_, str, application->expr_2);
-        // delete application;
-        expr = expr_;
+        Substitute(expr, str, application->expr_2);
         Evaluate(expr, context_local, context_ref);
         while (context_local.size() > context_size) {
-            // delete context_local.back().second;
             context_local.pop_back();
         }
     }
@@ -318,35 +297,28 @@ void Evaluate_Application(Expr *&expr, ContextIE &context_local, ContextE &conte
 void Evaluate_TypeAbstraction(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
     TypeAbstraction *type_abstraction = dynamic_cast <TypeAbstraction*> (expr);
     Evaluate(type_abstraction->expr_, context_local, context_ref);
-    Expr *expr_ = type_abstraction->expr_->clone();
-    // delete type_abstraction;
-    expr = expr_;
+    expr = type_abstraction->expr_->clone();
 }
 void Evaluate_TypeApplication(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
     TypeApplication *type_application = dynamic_cast <TypeApplication*> (expr);
     Evaluate(type_application->expr_, context_local, context_ref);
-    Expr *expr_ = type_application->expr_->clone();
-    // delete type_application;
-    expr = expr_;
+    expr = type_application->expr_->clone();
 }
 void Evaluate_Fix(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
     Fix *fix = dynamic_cast <Fix*> (expr);
     Evaluate(fix->expr_, context_local, context_ref);
     if (Abstraction *abstraction = dynamic_cast <Abstraction*> (fix->expr_)) {
-        Expr *result = abstraction->expr_->clone();
+        Expr *expr_ = abstraction->expr_->clone();
         std::string str = itos_nl(0);
-        Substitute(result, str, expr->clone());
-        // delete expr;
-        expr = result;
+        Substitute(expr_, str, expr->clone());
+        expr = expr_;
     }
     Evaluate(expr, context_local, context_ref);
 }
 void Evaluate_Where(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
     Where *where = dynamic_cast <Where*> (expr);
     Evaluate(where->expr_1, context_local, context_ref);
-    Expr *expr_ = where->expr_1->clone();
-    // delete where;
-    expr = expr_;
+    expr = where->expr_1->clone();
 }
 void Evaluate_Reference(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
     Reference *reference = dynamic_cast <Reference*> (expr);
@@ -362,9 +334,7 @@ void Evaluate_Dereference(Expr *&expr, ContextIE &context_local, ContextE &conte
     if (Reference *reference = dynamic_cast <Reference*> (dereference->expr_)) {
         if (Var *var_ = dynamic_cast <Var*> (reference->expr_)) {
             if (is_meta(var_->ident_)) {
-                Expr *expr_ = context_ref[stoi_meta(var_->ident_)];
-                // delete expr;
-                expr = expr_;
+                expr = context_ref[stoi_meta(var_->ident_)];
             }
         }
     }
@@ -374,7 +344,8 @@ void Evaluate_TupleGet(Expr *&expr, ContextIE &context_local, ContextE &context_
     TupleGet *tuple_get = dynamic_cast <TupleGet*> (expr);
     Evaluate(tuple_get->expr_, context_local, context_ref);
     if (Tuple *tuple = dynamic_cast <Tuple*> (tuple_get->expr_)) {
-        expr = (*(tuple->listexpr_))[tuple_get->integer_ - 1];
+        expr = (*(tuple->listexpr_))[tuple_get->integer_ - 1]->clone();
+        Evaluate(expr, context_local, context_ref);
     }
 }
 void Evaluate_Record(Expr *&expr, ContextIE &context_local, ContextE &context_ref) { }
@@ -382,10 +353,11 @@ void Evaluate_RecordGet(Expr *&expr, ContextIE &context_local, ContextE &context
     RecordGet *record_get = dynamic_cast <RecordGet*> (expr);
     Evaluate(record_get->expr_, context_local, context_ref);
     if (Record *record = dynamic_cast <Record*> (record_get->expr_)) {
-        for (ListRecordField_::iterator i = record->listrecordfield__->begin() ; i != record->listrecordfield__->end() ; i++) {
+        for (ListRecordField_::iterator i = record->listrecordfield__->begin(); i != record->listrecordfield__->end(); i++) {
             RecordField *record_field = dynamic_cast <RecordField*> (*i);
             if (record_field->ident_ == record_get->ident_) {
-                expr = record_field->expr_;
+                expr = record_field->expr_->clone();
+                Evaluate(expr, context_local, context_ref);
                 break;
             }
         }
@@ -401,10 +373,8 @@ void Evaluate_VariantCase(Expr *&expr, ContextIE &context_local, ContextE &conte
             if (variant->ident_ == variant_field->ident_1) {
                 std::string str = itos_nl(0);
                 Substitute(variant_field->expr_, str, variant->expr_);
-                Expr *expr_ = variant_field->expr_->clone();
-                Evaluate(expr_, context_local, context_ref);
-                // delete expr;
-                expr = expr_;
+                expr = variant_field->expr_->clone();
+                Evaluate(expr, context_local, context_ref);
                 return;
             }
         }
@@ -412,7 +382,7 @@ void Evaluate_VariantCase(Expr *&expr, ContextIE &context_local, ContextE &conte
 }
 void Evaluate_Array(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
     Array *array = dynamic_cast <Array*> (expr);
-    for (ListExpr::iterator i = array->listexpr_->begin() ; i != array->listexpr_->end() ; i++) {
+    for (ListExpr::iterator i = array->listexpr_->begin(); i != array->listexpr_->end(); i++) {
         Evaluate(*i, context_local, context_ref);
     }
 }
@@ -422,7 +392,9 @@ void Evaluate_ArrayGet(Expr *&expr, ContextIE &context_local, ContextE &context_
     Evaluate(array_get->expr_2, context_local, context_ref);
     
     Reference *reference = dynamic_cast <Reference*> (array_get->expr_1);
+    if (!reference) return;
     Var *var_ = dynamic_cast <Var*> (reference->expr_);
+    if (!var_) return;
     Array *array = dynamic_cast <Array*> (context_ref[stoi_meta(var_->ident_)]);
     ConstInt *const_int = dynamic_cast <ConstInt*> (array_get->expr_2);
 
@@ -439,7 +411,9 @@ void Evaluate_ArrayPush(Expr *&expr, ContextIE &context_local, ContextE &context
     Evaluate(array_push->expr_2, context_local, context_ref);
 
     Reference *reference = dynamic_cast <Reference*> (array_push->expr_1);
+    if (!reference) return;
     Var *var_ = dynamic_cast <Var*> (reference->expr_);
+    if (!var_) return;
     Array *array = dynamic_cast <Array*> (context_ref[stoi_meta(var_->ident_)]);
 
     if (array) {
@@ -452,7 +426,9 @@ void Evaluate_ArrayPop(Expr *&expr, ContextIE &context_local, ContextE &context_
     Evaluate(array_pop->expr_, context_local, context_ref);
 
     Reference *reference = dynamic_cast <Reference*> (array_pop->expr_);
+    if (!reference) return;
     Var *var_ = dynamic_cast <Var*> (reference->expr_);
+    if (!var_) return;
     Array *array = dynamic_cast <Array*> (context_ref[stoi_meta(var_->ident_)]);
 
     if (array) {
@@ -468,7 +444,9 @@ void Evaluate_ArrayLen(Expr *&expr, ContextIE &context_local, ContextE &context_
     Evaluate(array_len->expr_, context_local, context_ref);
 
     Reference *reference = dynamic_cast <Reference*> (array_len->expr_);
+    if (!reference) return;
     Var *var_ = dynamic_cast <Var*> (reference->expr_);
+    if (!var_) return;
     Array *array = dynamic_cast <Array*> (context_ref[stoi_meta(var_->ident_)]);
 
     if (array) {
@@ -481,9 +459,7 @@ void Evaluate_ToInt(Expr *&expr, ContextIE &context_local, ContextE &context_ref
     ToInt *to_int = dynamic_cast <ToInt*> (expr);
     Evaluate(to_int->expr_, context_local, context_ref);
     if (ConstReal *const_real = dynamic_cast <ConstReal*> (to_int->expr_)) {
-        Expr *expr_ = new ConstInt((int)const_real->double_);
-        // delete expr;
-        expr = expr_;
+        expr = new ConstInt((int)const_real->double_);
     }
 }
 void Evaluate_AddInt(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
@@ -493,9 +469,7 @@ void Evaluate_AddInt(Expr *&expr, ContextIE &context_local, ContextE &context_re
     ConstInt *const_int_1 = dynamic_cast <ConstInt*> (add_int->expr_1);
     ConstInt *const_int_2 = dynamic_cast <ConstInt*> (add_int->expr_2);
     if (const_int_1 && const_int_2) {
-        Expr *expr_ = new ConstInt(const_int_1->integer_ + const_int_2->integer_);
-        // delete expr;
-        expr = expr_;
+        expr = new ConstInt(const_int_1->integer_ + const_int_2->integer_);
     }
 }
 void Evaluate_SubInt(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
@@ -505,9 +479,7 @@ void Evaluate_SubInt(Expr *&expr, ContextIE &context_local, ContextE &context_re
     ConstInt *const_int_1 = dynamic_cast <ConstInt*> (sub_int->expr_1);
     ConstInt *const_int_2 = dynamic_cast <ConstInt*> (sub_int->expr_2);
     if (const_int_1 && const_int_2) {
-        Expr *expr_ = new ConstInt(const_int_1->integer_ - const_int_2->integer_);
-        // delete expr;
-        expr = expr_;
+        expr = new ConstInt(const_int_1->integer_ - const_int_2->integer_);
     }
 }
 void Evaluate_MulInt(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
@@ -517,9 +489,7 @@ void Evaluate_MulInt(Expr *&expr, ContextIE &context_local, ContextE &context_re
     ConstInt *const_int_1 = dynamic_cast <ConstInt*> (mul_int->expr_1);
     ConstInt *const_int_2 = dynamic_cast <ConstInt*> (mul_int->expr_2);
     if (const_int_1 && const_int_2) {
-        Expr *expr_ = new ConstInt(const_int_1->integer_ * const_int_2->integer_);
-        // delete expr;
-        expr = expr_;
+        expr = new ConstInt(const_int_1->integer_ * const_int_2->integer_);
     }
 }
 void Evaluate_DivInt(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
@@ -529,9 +499,7 @@ void Evaluate_DivInt(Expr *&expr, ContextIE &context_local, ContextE &context_re
     ConstInt *const_int_1 = dynamic_cast <ConstInt*> (div_int->expr_1);
     ConstInt *const_int_2 = dynamic_cast <ConstInt*> (div_int->expr_2);
     if (const_int_1 && const_int_2) {
-        Expr *expr_ = new ConstInt(const_int_1->integer_ / const_int_2->integer_);
-        // delete expr;
-        expr = expr_;
+        expr = new ConstInt(const_int_1->integer_ / const_int_2->integer_);
     }
 }
 void Evaluate_EquInt(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
@@ -541,13 +509,10 @@ void Evaluate_EquInt(Expr *&expr, ContextIE &context_local, ContextE &context_re
     ConstInt *const_int_1 = dynamic_cast <ConstInt*> (equ_int->expr_1);
     ConstInt *const_int_2 = dynamic_cast <ConstInt*> (equ_int->expr_2);
     if (const_int_1 && const_int_2) {
-        Expr *expr_;
         if (const_int_1->integer_ == const_int_2->integer_)
-            expr_ = new ConstTrue();
+            expr = new ConstTrue();
         else
-            expr_ = new ConstFalse();
-        // delete expr;
-        expr = expr_;
+            expr = new ConstFalse();
     }
 }
 void Evaluate_LesInt(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
@@ -557,13 +522,10 @@ void Evaluate_LesInt(Expr *&expr, ContextIE &context_local, ContextE &context_re
     ConstInt *const_int_1 = dynamic_cast <ConstInt*> (les_int->expr_1);
     ConstInt *const_int_2 = dynamic_cast <ConstInt*> (les_int->expr_2);
     if (const_int_1 && const_int_2) {
-        Expr *expr_;
         if (const_int_1->integer_ < const_int_2->integer_)
-            expr_ = new ConstTrue();
+            expr = new ConstTrue();
         else
-            expr_ = new ConstFalse();
-        // delete expr;
-        expr = expr_;
+            expr = new ConstFalse();
     }
 }
 
@@ -572,9 +534,7 @@ void Evaluate_ToReal(Expr *&expr, ContextIE &context_local, ContextE &context_re
     ToReal *to_real = dynamic_cast <ToReal*> (expr);
     Evaluate(to_real->expr_, context_local, context_ref);
     if (ConstInt *const_int = dynamic_cast <ConstInt*> (to_real->expr_)) {
-        Expr *expr_ = new ConstReal((double)const_int->integer_);
-        // delete expr;
-        expr = expr_;
+        expr = new ConstReal((double)const_int->integer_);
     }
 }
 void Evaluate_AddReal(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
@@ -584,9 +544,7 @@ void Evaluate_AddReal(Expr *&expr, ContextIE &context_local, ContextE &context_r
     ConstReal *const_real_1 = dynamic_cast <ConstReal*> (add_real->expr_1);
     ConstReal *const_real_2 = dynamic_cast <ConstReal*> (add_real->expr_2);
     if (const_real_1 && const_real_2) {
-        Expr *expr_ = new ConstReal(const_real_1->double_ + const_real_2->double_);
-        // delete expr;
-        expr = expr_;
+        expr = new ConstReal(const_real_1->double_ + const_real_2->double_);
     }
 }
 void Evaluate_SubReal(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
@@ -596,9 +554,7 @@ void Evaluate_SubReal(Expr *&expr, ContextIE &context_local, ContextE &context_r
     ConstReal *const_real_1 = dynamic_cast <ConstReal*> (sub_real->expr_1);
     ConstReal *const_real_2 = dynamic_cast <ConstReal*> (sub_real->expr_2);
     if (const_real_1 && const_real_2) {
-        Expr *expr_ = new ConstReal(const_real_1->double_ - const_real_2->double_);
-        // delete expr;
-        expr = expr_;
+        expr = new ConstReal(const_real_1->double_ - const_real_2->double_);
     }
 }
 void Evaluate_MulReal(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
@@ -608,9 +564,7 @@ void Evaluate_MulReal(Expr *&expr, ContextIE &context_local, ContextE &context_r
     ConstReal *const_real_1 = dynamic_cast <ConstReal*> (mul_real->expr_1);
     ConstReal *const_real_2 = dynamic_cast <ConstReal*> (mul_real->expr_2);
     if (const_real_1 && const_real_2) {
-        Expr *expr_ = new ConstReal(const_real_1->double_ * const_real_2->double_);
-        // delete expr;
-        expr = expr_;
+        expr = new ConstReal(const_real_1->double_ * const_real_2->double_);
     }
 }
 void Evaluate_DivReal(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
@@ -620,9 +574,7 @@ void Evaluate_DivReal(Expr *&expr, ContextIE &context_local, ContextE &context_r
     ConstReal *const_real_1 = dynamic_cast <ConstReal*> (div_real->expr_1);
     ConstReal *const_real_2 = dynamic_cast <ConstReal*> (div_real->expr_2);
     if (const_real_1 && const_real_2) {
-        Expr *expr_ = new ConstReal(const_real_1->double_ / const_real_2->double_);
-        // delete expr;
-        expr = expr_;
+        expr = new ConstReal(const_real_1->double_ / const_real_2->double_);
     }
 }
 void Evaluate_EquReal(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
@@ -632,13 +584,10 @@ void Evaluate_EquReal(Expr *&expr, ContextIE &context_local, ContextE &context_r
     ConstReal *const_real_1 = dynamic_cast <ConstReal*> (equ_real->expr_1);
     ConstReal *const_real_2 = dynamic_cast <ConstReal*> (equ_real->expr_2);
     if (const_real_1 && const_real_2) {
-        Expr *expr_;
         if (const_real_1->double_ == const_real_2->double_)
-            expr_ = new ConstTrue();
+            expr = new ConstTrue();
         else
-            expr_ = new ConstFalse();
-        // delete expr;
-        expr = expr_;
+            expr = new ConstFalse();
     }
 }
 void Evaluate_LesReal(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
@@ -648,13 +597,10 @@ void Evaluate_LesReal(Expr *&expr, ContextIE &context_local, ContextE &context_r
     ConstReal *const_real_1 = dynamic_cast <ConstReal*> (les_real->expr_1);
     ConstReal *const_real_2 = dynamic_cast <ConstReal*> (les_real->expr_2);
     if (const_real_1 && const_real_2) {
-        Expr *expr_;
         if (const_real_1->double_ < const_real_2->double_)
-            expr_ = new ConstTrue();
+            expr = new ConstTrue();
         else
-            expr_ = new ConstFalse();
-        // delete expr;
-        expr = expr_;
+            expr = new ConstFalse();
     }
 }
 
@@ -689,11 +635,11 @@ void Evaluate(Statement *&expr, ContextIE &context_local, ContextE &context_ref)
     if (dynamic_cast <Definition*> (expr)) {
         Evaluate_Definition(expr, context_local, context_ref); return;
     }
-    if (dynamic_cast <MoveAssignment*> (expr)) {
-        Evaluate_MoveAssignment(expr, context_local, context_ref); return;
+    if (dynamic_cast <TypeDefinition*> (expr)) {
+        Evaluate_TypeDefinition(expr, context_local, context_ref); return;
     }
-    if (dynamic_cast <CopyAssignment*> (expr)) {
-        Evaluate_CopyAssignment(expr, context_local, context_ref); return;
+    if (dynamic_cast <Assignment*> (expr)) {
+        Evaluate_Assignment(expr, context_local, context_ref); return;
     }
     if (dynamic_cast <IfStatement*> (expr)) {
         Evaluate_IfStatement(expr, context_local, context_ref); return;
@@ -723,25 +669,14 @@ void Evaluate_Definition(Statement *&expr, ContextIE &context_local, ContextE &c
     Evaluate(definition->expr_, context_local, context_ref);
     context_local.push_back({definition->ident_, definition->expr_});
 }
-void Evaluate_MoveAssignment(Statement *&expr, ContextIE &context_local, ContextE &context_ref) {
-    MoveAssignment *move_assignment = dynamic_cast <MoveAssignment*> (expr);
-    Evaluate(move_assignment->expr_1, context_local, context_ref);
-    Evaluate(move_assignment->expr_2, context_local, context_ref);
-    if (Reference *reference = dynamic_cast <Reference*> (move_assignment->expr_1)) {
+void Evaluate_TypeDefinition(Statement *&expr, ContextIE &context_local, ContextE &context_ref) { }
+void Evaluate_Assignment(Statement *&expr, ContextIE &context_local, ContextE &context_ref) {
+    Assignment *assignment = dynamic_cast <Assignment*> (expr);
+    Evaluate(assignment->expr_1, context_local, context_ref);
+    Evaluate(assignment->expr_2, context_local, context_ref);
+    if (Reference *reference = dynamic_cast <Reference*> (assignment->expr_1)) {
         if (Var *var_ = dynamic_cast <Var*> (reference->expr_)) {
-            context_ref[stoi_meta(var_->ident_)] = move_assignment->expr_2;
-        }
-    }
-}
-void Evaluate_CopyAssignment(Statement *&expr, ContextIE &context_local, ContextE &context_ref) {
-    CopyAssignment *copy_assignment = dynamic_cast <CopyAssignment*> (expr);
-    Evaluate(copy_assignment->expr_1, context_local, context_ref);
-    Evaluate(copy_assignment->expr_2, context_local, context_ref);
-    if (Reference *reference = dynamic_cast <Reference*> (copy_assignment->expr_1)) {
-        if (Var *var_ = dynamic_cast <Var*> (reference->expr_)) {
-            int n = (int)context_ref.size();
-            context_ref.push_back(copy_assignment->expr_2);
-            reference->expr_ = new Var(itos_meta(n));
+            context_ref[stoi_meta(var_->ident_)] = assignment->expr_2;
         }
     }
 }
@@ -766,13 +701,16 @@ void Evaluate_Loop(Statement *&expr, ContextIE &context_local, ContextE &context
     Loop *loop = dynamic_cast <Loop*> (expr);
     BreakFlag = false;
     ContinueFlag = false;
-    Statement *expr_ = expr->clone();
     
-    Evaluate(loop->liststatement_, context_local, context_ref);
-    ContinueFlag = false;
-    if (!BreakFlag) {
-        expr = expr_;
-        Evaluate(expr, context_local, context_ref);
+    while (true) {
+        Statement *expr_ = expr->clone();
+        loop = dynamic_cast <Loop*> (expr_);
+        Evaluate(loop->liststatement_, context_local, context_ref);
+        ContinueFlag = false;
+        if (BreakFlag) {
+            BreakFlag = false;
+            break;
+        }
     }
 }
 void Evaluate_Break(Statement *&expr, ContextIE &context_local, ContextE &context_ref) {
@@ -797,7 +735,6 @@ void Evaluate(ListStatement *&list, ContextIE &context_local, ContextE &context_
             break;
     }
     while (context_local.size() > context_size) {
-        // delete context_local.back().second;
         context_local.pop_back();
     }
 }

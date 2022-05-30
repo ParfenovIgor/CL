@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>
+            CL Language Documentation
+        </title>
+    </head>
+
+    <body>
+        <header>
+            <h1 class="page-title">
+                CL Language Documentation
+            </h1>
+
+            <p><a href="https://github.com/ParfenovIgor/CL">GitHub</a></p>
+
+            <p>
+                Author: Igor Parfenov
+            </p>
+
+            <p>Last update 29.05.2022</p>
+        </header>
+
+        <main>
+            <div>
+                <h2 id="Navigation">Navigation</h2>
+                <ol>
+                    <li>
+                        <a href="#Description">Description</a>
+                        <ol>
+                            <li>
+                                <a href="#Introduction">Introduction</a>
+                                <ol>
+                                    <li><a href="#What is CL">What is CL</a></li>
+                                    <li><a href="#CL Interpreter">CL Interpreter</a></li>
+                                    <li><a href="#Stages of Interpretation">Stages of Interpretation</a></li>
+                                    <li><a href="#Example">Example</a></li>
+                                </ol>
+                            </li>
+
+                            <li>
+                                <a href="#Essentials">Essentials</a>
+                                <ol>
+                                    <li><a href="#List of Types">List of Types</a></li>
+                                    <li><a href="#Introduction to Let-Polymorphism">Introduction to Let-Polymorphism</a></li>
+                                    <li><a href="#Introduction to Inference">Introduction to Inference</a></li>
+                                    <li><a href="#Introduction to System F">Introduction to System F</a></li>
+                                </ol>
+                            </li>
+                        </ol>
+                    </li>
+
+                    <li>
+                        <a href="#Specification">Specification</a>
+                        <ol>
+                            <li>
+                                <a href="#Types">Types</a>
+                                <ol>
+                                    <li><a href="#Auto Type">Auto Type</a></li>
+                                    <li><a href="#Bool Type">Bool Type</a></li>
+                                    <li><a href="#Nat Type">Nat Type</a></li>
+                                    <li><a href="#Ref Type">Ref Type</a></li>
+                                    <li><a href="#Var Type">Var Type</a></li>
+                                    <li><a href="#Uni Type">Uni Type</a></li>
+                                    <li><a href="#Fun Type">Fun Type</a></li>
+                                    <li><a href="#Tuple Type">Tuple Type</a></li>
+                                    <li><a href="#Record Type">Record Type</a></li>
+                                    <li><a href="#Variant Type">Variant Type</a></li>
+                                    <li><a href="#Array Type">Array Type</a></li>
+                                    <li><a href="#Int Type">Int Type</a></li>
+                                    <li><a href="#Real Type">Real Type</a></li>
+                                </ol>
+                            </li>
+
+                            <li>
+                                <a href="#Statements">Statements</a>
+                                <ol>
+                                    <li><a href="#Import Statement">Import Statement</a></li>
+                                    <li><a href="#Definition Statement">Definition Statement</a></li>
+                                    <li><a href="#TypeDefinition Statement">TypeDefinition Statement</a></li>
+                                    <li><a href="#Assignment Statement">Assignment Statement</a></li>
+                                    <li><a href="#If Statement">If Statement</a></li>
+                                    <li><a href="#IfElse Statement">IfElse Statement</a></li>
+                                    <li><a href="#Loop Statement">Loop Statement</a></li>
+                                    <li><a href="#Break Statement">Break Statement</a></li>
+                                    <li><a href="#Continue Statement">Continue Statement</a></li>
+                                    <li><a href="#Return Statement">Return Statement</a></li>
+                                    <li><a href="#Eval Statement">Eval Statement</a></li>
+                                </ol>
+                            </li>
+
+                            <li>
+                                <a href="#Expressions">Expressions</a>
+                                <ol>
+                                    <li><a href="#ConstTrue Expression">ConstTrue Expression</a></li>
+                                    <li><a href="#ConstFalse Expression">ConstFalse Expression</a></li>
+                                    <li><a href="#ConstZero Expression">ConstZero Expression</a></li>
+                                    <li><a href="#If Expression">If Expression</a></li>
+                                    <li><a href="#Succ Expression">Succ Expression</a></li>
+                                    <li><a href="#Pred Expression">Pred Expression</a></li>
+                                    <li><a href="#IsZero Expression">IsZero Expression</a></li>
+                                    <li><a href="#Var Expression">Var Expression</a></li>
+                                    <li><a href="#Abstraction Expression">Abstraction Expression</a></li>
+                                    <li><a href="#MultiAbstraction Expression">MultiAbstraction Expression</a></li>
+                                    <li><a href="#Application Expression">Application Expression</a></li>
+                                    <li><a href="#TypeAbstraction Expression">TypeAbstraction Expression</a></li>
+                                    <li><a href="#TypeApplication Expression">TypeApplication Expression</a></li>
+                                    <li><a href="#Fix Expression">Fix Expression</a></li>
+                                    <li><a href="#Where Expression">Where Expression</a></li>
+                                    <li><a href="#MultiWhere Expression">MultiWhere Expression</a></li>
+                                    <li><a href="#Reference Expression">Reference Expression</a></li>
+                                    <li><a href="#Dereference Expression">Dereference Expression</a></li>
+                                    <li><a href="#Tuple Expression">Tuple Expression</a></li>
+                                    <li><a href="#TupleGet Expression">TupleGet Expression</a></li>
+                                    <li><a href="#Record Expression">Record Expression</a></li>
+                                    <li><a href="#RecordGet Expression">RecordGet Expression</a></li>
+                                    <li><a href="#Variant Expression">Variant Expression</a></li>
+                                    <li><a href="#VariantCase Expression">VariantCase Expression</a></li>
+                                    <li><a href="#Array Expression">Array Expression</a></li>
+                                    <li><a href="#ArrayGet Expression">ArrayGet Expression</a></li>
+                                    <li><a href="#ArrayPush Expression">ArrayPush Expression</a></li>
+                                    <li><a href="#ArrayPop Expression">ArrayPop Expression</a></li>
+                                    <li><a href="#ArrayLen Expression">ArrayLen Expression</a></li>
+                                    <li><a href="#ConstInt Expression">ConstInt Expression</a></li>
+                                    <li><a href="#ToInt Expression">ToInt Expression</a></li>
+                                    <li><a href="#ConstReal Expression">ConstReal Expression</a></li>
+                                    <li><a href="#ToReal Expression">ToReal Expression</a></li>
+                                    <li><a href="#Binary Operations">Binary Operations</a></li>
+                                    <li><a href="#ReadInt Expression">ReadInt Expression</a></li>
+                                    <li><a href="#ReadReal Expression">ReadReal Expression</a></li>
+                                    <li><a href="#WriteInt Expression">WriteInt Expression</a></li>
+                                    <li><a href="#WriteReal Expression">WriteReal Expression</a></li>
+                                </ol>
+                            </li>
+                        </ol>
+                    </li>
+                </ol>
+            </div>
+
+            <div>
+                <div>
+                    <h2 id="Description">1. Description</h2>
+
+                    <div>
+                        <h3 id="Introduction">1.1. Introduction</h2>
+
+                        <h4 id="What is CL">1.1.1. What is CL</h3>
+                        <p>
+                            <b>CL</b> is a <b>Statically Typed</b> language, which supports <b>Functional</b> and <b>Procedural</b> paradigms. It also supports standard functional features, such as <b>Static Type Inference</b>, <b>System F</b> and <b>Let-Polymorphism</b>.
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="CL Interpreter">1.1.2. CL Intepreter</h3>
+                        <p>
+                            The default implementation of CL Language is Interpreter.
+                            To run Interpreter, enter <b>cli [program name]</b>. Add flag <b>-d</b> to show debug information.
+                            To build Interpreter, the following conditions have to be satisfied:
+                            <ul>
+                                <li><b>Linux</b> OS</li>
+                                <li>Installed <b>GNU G++</b> compiler and build essentials, depending on OS</li>
+                                <li>Installed <b>GNU Make</b></li>
+                                <li>Installed <b>BNFC</b> version <b>2.9.4</b></li>
+                                <li>Installed <b>Flex</b></li>
+                                <li>Installed <b>GNU Bison</b></li>
+                            </ul>
+                            Enter <b>make syntax</b> and then <b>make interpreter</b> to build CL Interpreter.
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Stages of Interpretation">1.1.4. Stages of Interpretation</h3>
+                        <p>
+                            <ol>
+                                <li>Assembly Stage. During this stage following Statements are evaluated:
+                                    <ul>
+                                        <li>Import</li>
+                                        <li>MultiAbstraction</li>
+                                        <li>MultiWhere</li>
+                                    </ul>
+                                </li>
+                                <li>To Nameless Stage. During this stage all bounded non-local variables are rewritten in nameless Identifiers.</li>
+                                <li>Typechecking Stage. Consist of two substages:
+                                    <ol>
+                                        <li>Collecting Constraints</li>
+                                        <li>Solving Constraints using Unification Algorithm</li>
+                                    </ol>
+                                </li>
+                                <li>Evaluation Stage. During this stage the program is run.</li>
+                            </ol>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Example">1.1.4. Example</h3>
+                        <p>
+                            The program is a list of Statements, which are separated by semicolon. There are line comments <i>//</i> and block comments <i>/* .. */</i>.<br>
+                            <i>
+                                // This is comment.<br>
+                                def Nat x = $0; // Definition of local value x of Type Nat and initial value $0.<br>
+                                def _ y = succ x; // One can not write Type annotations. In simple cases, they can be constructed automatically.<br>
+                                def _ foo = fun (_ x) { ret succ x }; // Definition of local function, which takes Nat and increments it.<br>
+                                def _ z = ref $0; // Definition of reference to Nat. Reference value can be changed.<br>
+                                z <- foo y; // Assign value of z to the result of application increment function to y. Now value of z is succ succ $0.<br>
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+                    </div>
+
+                    <div>
+                        <h3 id="Essentials">1.2. Essentials</h2>
+
+                        <h4 id="List of Types">1.2.1. List of Types</h3>
+                        <p>
+                            <table border="1">
+                                <tr>
+                                    <td>Type Name</td>
+                                    <td>Type Example</td>
+                                    <td>Expression with such Type Example</td>
+                                </tr>
+                                <tr>
+                                    <td>Auto*</td>
+                                    <td>_</td>
+                                    <td>None</td>
+                                </tr>
+                                <tr>
+                                    <td>Bool</td>
+                                    <td>Bool</td>
+                                    <td>true, false</td>
+                                </tr>
+                                <tr>
+                                    <td>Nat</td>
+                                    <td>Nat</td>
+                                    <td>$0, succ $0</td>
+                                </tr>
+                                <tr>
+                                    <td>Ref</td>
+                                    <td>Ref Nat</td>
+                                    <td>ref $0</td>
+                                </tr>
+                                <tr>
+                                    <td>Var</td>
+                                    <td>X</td>
+                                    <td>None</td>
+                                </tr>
+                                <tr>
+                                    <td>Uni</td>
+                                    <td>%X. X -> X</td>
+                                    <td>uni X ~> fun (X x) { ret x }</td>
+                                </tr>
+                                <tr>
+                                    <td>Fun</td>
+                                    <td>Nat -> Bool</td>
+                                    <td>fun (_ x) { ret iszero x }</td>
+                                </tr>
+                                <tr>
+                                    <td>Tuple</td>
+                                    <td>&ltNat, Bool&gt</td>
+                                    <td>&lt$0, true&gt</td>
+                                </tr>
+                                <tr>
+                                    <td>Record</td>
+                                    <td>{x : Nat, y : Bool}</td>
+                                    <td>{x = $0, y = true}</td>
+                                </tr>
+                                <tr>
+                                    <td>Variant</td>
+                                    <td>&ltx : Nat, y : Bool&gt</td>
+                                    <td>&ltx = $0&gt as &ltx : Nat, y : Bool&gt</td>
+                                </tr>
+                                <tr>
+                                    <td>Array</td>
+                                    <td>[Nat]</td>
+                                    <td>[$0, succ $0]</td>
+                                </tr>
+                                <tr>
+                                    <td>Int</td>
+                                    <td>Int</td>
+                                    <td>1, 4325</td>
+                                </tr>
+                                <tr>
+                                    <td>Real</td>
+                                    <td>Real</td>
+                                    <td>1.2, 53.326</td>
+                                </tr>
+                            </table>
+                            *Auto Type can only be written in Abstractions and Definitions, to ask the Interpreter to construct Types by itself.
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Introduction to Let-Polymorphism">1.2.2. Introduction to Let-Polymorphism</h3>
+                        <p>
+                            Assume one want to be able to define function, which can be applied to any Type. But the function has to have one concrete Type. One of the ways to solve this is <b>Let-Polymorphism</b>, which idea is to copy function for every its occurrence.<br>
+                            <i>
+                                id (iszero (id $0))<br>
+                                where id = fun (_ x) { ret x } // Because of Let-Polymorphism, this program is Type correct. <br>
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Introduction to Inference">1.2.3. Introduction to Inference</h3>
+                            <b>Type Inference</b> often gives to programmer an ability to not write Types of Expressions explicitly. Typechecking traverses program and collects Constraints, which are pairs of Types, which mean, they are equal. <b>Only Base Types, except Var Type, and Fun Types can be inferred</b>, those are Bool, Nat, Int, Real and Fun.<br>
+                            <i>
+                                def _ f = fun (_ x) { ret succ x }; // This is correct: x is Base Type.<br>
+                                def _ y = fun (_ x) { ret *x }; // This is incorrect: the information, that x has Ref Type has to be specified.
+                            </i>
+                        <p>
+
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Introduction to System F">1.2.4. Introduction to System F</h3>
+                            <b>System F</b> is a way to implement polymorphism, giving to programmer ability to override the function for different Types. The function has to not introduce any Constraint to given Type. This Type is calls <b>Universal</b>. Example:<br>
+                            <i>
+                                def _ id = uni X ~> fun (X x) { ret x }; // This is id function, which first has to get Type.<br>
+                                def _ a = id [Nat] succ $0; // Apply [Nat] to id, to make it function Nat -> Nat.<br>
+                                def _ b = id [Nat -> Bool] (fun (_ x) { ret iszero x }); // Apply [Nat -> Bool] to id, to make it function (Nat -> Bool) -> (Nat -> Bool).
+                            </i>
+                        <p>
+
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 id="Specification">2. Specification</h2>
+
+                    <div>
+                        <h3 id="Types">2.1. Types</h2>
+
+                        <h4 id="Auto Type">2.1.1. Auto Type</h3>
+                        <p>
+                            Auto Type is used to mark the Expression for automatic Type Inference.<br>
+                            <table border="1">
+                                <tr><td>Base/Complex</td>
+                                <td>Base</td></tr>
+                                <tr><td>Type Form</td>
+                                <td>_</td></tr>
+                                <tr><td>Value Form</td>
+                                <td>None</td></tr>
+                                <tr><td>Example of Type Annotation</td>
+                                <td>_</td></tr>
+                            </table>
+                            Code Example:<br>
+                            <i>
+                                def _ x = succ $0;
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Bool Type">2.1.2. Bool Type</h3>
+                        <p>
+                            <table border="1">
+                                <tr><td>Base/Complex</td>
+                                <td>Base</td></tr>
+                                <tr><td>Type Form</td>
+                                <td>Bool</td></tr>
+                                <tr><td>Value Form</td>
+                                <td>true | false</td></tr>
+                                <tr><td>Example of Type Annotation</td>
+                                <td>Bool</td></tr>
+                            </table>
+                            Code Example:<br>
+                            <i>
+                                def Bool x = true;
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Nat Type">2.1.3. Nat Type</h3>
+                        <p>
+                            <table border="1">
+                                <tr><td>Base/Complex</td>
+                                <td>Base</td></tr>
+                                <tr><td>Type Form</td>
+                                <td>Nat</td></tr>
+                                <tr><td>Value Form</td>
+                                <td><i><b>nat</b> ::= $0 | succ <b>nat</b></i></td></tr>
+                                <tr><td>Example of Type Annotation</td>
+                                <td>Nat</td></tr>
+                            </table>
+                            Code Example:<br>
+                            <i>
+                                def Nat x = succ $0;
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Ref Type">2.1.4. Ref Type</h3>
+                        <p>
+                            <table border="1">
+                                <tr><td>Base/Complex</td>
+                                <td>Complex</td></tr>
+                                <tr><td>Type Form</td>
+                                <td>Ref <b>type</b></td></tr>
+                                <tr><td>Value Form</td>
+                                <td>ref <b>type</b></td></tr>
+                                <tr><td>Example of Type Annotation</td>
+                                <td>Ref Nat</td></tr>
+                            </table>
+                            Code Example:<br>
+                            <i>
+                                def Ref Nat x = ref succ $0;
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Var Type">2.1.5. Var Type</h3>
+                        <p>
+                            The Identifier has to be bounded by Type Abstraction.<br>
+                            <table border="1">
+                                <tr><td>Base/Complex</td>
+                                <td>Base</td></tr>
+                                <tr><td>Type Form</td>
+                                <td><b>ident</b></td></tr>
+                                <tr><td>Value Form</td>
+                                <td>None</td></tr>
+                                <tr><td>Example of Type Annotation</td>
+                                <td>X</td></tr>
+                            </table>
+                            Code Example:<br>
+                            <i>
+                                def _ f = uni X ~> fun (X x) { ret x };
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Uni Type">2.1.6. Uni Type</h3>
+                        <p>
+                            <table border="1">
+                                <tr><td>Base/Complex</td>
+                                <td>Complex</td></tr>
+                                <tr><td>Type Form</td>
+                                <td>%<b>ident</b>.<b>type</b></td></tr>
+                                <tr><td>Value Form</td>
+                                <td>uni <b>ident</b> ~> <b>expr</b></td></tr>
+                                <tr><td>Example of Type Annotation</td>
+                                <td>%X.X -> X</td></tr>
+                            </table>
+                            Code Example:<br>
+                            <i>
+                                def %X.X -> X f = uni X ~> fun (X x) { ret x };
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Fun Type">2.1.7. Fun Type</h3>
+                        <p>
+                            <table border="1">
+                                <tr><td>Base/Complex</td>
+                                <td>Complex</td></tr>
+                                <tr><td>Type Form</td>
+                                <td><b>type</b>-><b>type</b></td></tr>
+                                <tr><td>Value Form</td>
+                                <td>fun (<b>type</b> <b>expr</b>) { [<b>stmt</b>] ret <b>expr</b>}</td></tr>
+                                <tr><td>Example of Type Annotation</td>
+                                <td>Nat -> Bool</td></tr>
+                            </table>
+                            Code Example:<br>
+                            <i>
+                                def Nat -> Bool f = fun (_ x) { ret iszero f };
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Tuple Type">2.1.8. Tuple Type</h3>
+                        <p>
+                            <table border="1">
+                                <tr><td>Base/Complex</td>
+                                <td>Complex</td></tr>
+                                <tr><td>Type Form</td>
+                                <td>&lt<b>[type]</b>&gt</td></tr>
+                                <tr><td>Value Form</td>
+                                <td>&lt<b>[expr]</b>&gt</td></tr>
+                                <tr><td>Example of Type Annotation</td>
+                                <td>&ltNat, Bool&gt</td></tr>
+                            </table>
+                            Code Example:<br>
+                            <i>
+                                def &ltNat, Bool&gt x = &ltsucc $0, true&gt;
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Record Type">2.1.9. Record Type</h3>
+                        <p>
+                            <table border="1">
+                                <tr><td>Base/Complex</td>
+                                <td>Complex</td></tr>
+                                <tr><td>Type Form</td>
+                                <td>{<b>[ident</b> : <b>expr]</b>}</td></tr>
+                                <tr><td>Value Form</td>
+                                <td>{<b>[ident</b> = <b>expr]</b>}</td></tr>
+                                <tr><td>Example of Type Annotation</td>
+                                <td>{x : Nat, y : Bool}</td></tr>
+                            </table>
+                            Code Example:<br>
+                            <i>
+                                def {x : Nat, y : Bool} x = {x = succ $0, y = true};
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Variant Type">2.1.10. Variant Type</h3>
+                        <p>
+                            <table border="1">
+                                <tr><td>Base/Complex</td>
+                                <td>Complex</td></tr>
+                                <tr><td>Type Form</td>
+                                <td>&lt<b>[ident</b> : <b>expr</b><b>]</b>&gt</td></tr>
+                                <tr><td>Value Form</td>
+                                <td>&lt<b>ident</b> = <b>expr</b>&gt as &lt<b>[ident</b> : <b>expr]</b>&gt</td></tr>
+                                <tr><td>Example of Type Annotation</td>
+                                <td>&ltx : Nat, y : Bool&gt</td></tr>
+                            </table>
+                            Code Example:<br>
+                            <i>
+                                def &ltx : Nat, y : Bool&gt x = &ltx = succ $0&gt as &ltx : Nat, y = Bool&gt;
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Array Type">2.1.11. Array Type</h3>
+                        <p>
+                            <table border="1">
+                                <tr><td>Base/Complex</td>
+                                <td>Complex</td></tr>
+                                <tr><td>Type Form</td>
+                                <td>[<b>type</b>]</td></tr>
+                                <tr><td>Value Form</td>
+                                <td>[<b>[</b><b>expr</b><b>]</b>]</td></tr>
+                                <tr><td>Example of Type Annotation</td>
+                                <td>[Nat]</td></tr>
+                            </table>
+                            Code Example:<br>
+                            <i>
+                                def [Nat] x = [$0, succ $0];
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Int Type">2.1.12. Int Type</h3>
+                        <p>
+                            <table border="1">
+                                <tr><td>Base/Complex</td>
+                                <td>Base</td></tr>
+                                <tr><td>Type Form</td>
+                                <td>Int</td></tr>
+                                <tr><td>Value Form</td>
+                                <td>32-bit signed integer</td></tr>
+                                <tr><td>Example of Type Annotation</td>
+                                <td>Int</td></tr>
+                            </table>
+                            Code Example:<br>
+                            <i>
+                                def Int x = 3;
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Real Type">2.1.13. Real Type</h3>
+                        <p>
+                            <table border="1">
+                                <tr><td>Base/Complex</td>
+                                <td>Base</td></tr>
+                                <tr><td>Type Form</td>
+                                <td>Real</td></tr>
+                                <tr><td>Value Form</td>
+                                <td>64-bit floating-point number</td></tr>
+                                <tr><td>Example of Type Annotation</td>
+                                <td>Real</td></tr>
+                            </table>
+                            Code Example:<br>
+                            <i>
+                                def Real x = 2.3;
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+                    </div>
+
+                    <div>
+                        <h3 id="Statements">2.2. Statements</h2>
+
+                        <h4 id="Import Statement">2.2.1. Import Statement</h3>
+                        <p>
+                            This Statement is evaluated during Assemble Stage, and substitutes instead of it list of global scope Statements in given file.<br>
+                            Form: import string<br>
+                            Typing Rules: import <b>s</b><br>
+                            Code Example:<br>
+                            <i>
+                                import "file"
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Definition Statement">2.2.2. Definition Statement</h3>
+                        <p>
+                            When this Statement is evaluated, it evaluates its argument and stores it into stack of local definitions. Every Abstraction creates new stack of local definitions, so if there is two Statements in one scope, one of which is Abstraction, the second one is hidden in the Abstraction body.<br>
+                            Form: def <b>type</b> <b>ident</b> = <b>expr</b><br>
+                            Typing Rules: def <b>t</b> <b>i</b> = <b>e</b> <= <b>e</b> : <b>t</b><br>
+                            Code Example:<br>
+                            <i>
+                                def Nat x = succ $0;
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="TypeDefinition Statement">2.2.3. TypeDefinition Statement</h3>
+                        <p>
+                            When this Statement is evaluated, it replaces all occurrences of its Identifier in block with its Type.<br>
+                            Form: typedef <b>ident</b> = <b>type</b><br>
+                            Typing Rules: typedef <b>i</b> = <b>t</b><br>
+                            Code Example:<br>
+                            <i>
+                                typedef nat = Nat;<br>
+                                def nat a = succ $0;
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Assignment Statement">2.2.4. Assignment Statement</h3>
+                        <p>
+                            When this Statement is evaluated, it evaluated both Expressions, dereferences its left Expression, and stores in it the value of right Expression. The left Expression has to have <b>Ref</b> Type.<br>
+                            Form: <b>expr</b> <- <b>expr</b><br>
+                            Typing Rules: <b>e1</b> <- <b>e2</b> <= <b>e1</b> : Ref <b>t</b> & <b>e2</b> : <b>t</b><br>
+                            Code Example:<br>
+                            <i>
+                                def _ x = ref $0;<br>
+                                x <- succ $0;
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="If Statement">2.2.5. If Statement</h3>
+                        <p>
+                            When this Statement is evaluated, it evaluates it condition Expression, which has to have Bool Type. If the condition is true, then the body will be evaluated.<br>
+                            Form: if (<b>expr</b>) {<b>[stmt]</b>}<br>
+                            Typing Rules: if (<b>e</b>) {<b>[s_i]</b>} <= <b>e</b> : Bool<br>
+                            Code Example:<br>
+                            <i>
+                                if (*x) {<br>
+                                    x <- false;<br>
+                                }
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="IfElse Statement">2.2.6. IfElse Statement</h3>
+                        <p>
+                            When this Statement is evaluated, it evaluates it condition Expression, which has to have Bool Type. If the condition is true, then the first body will be evaluated, otherwise the second body will be evaluated.<br>
+                            Form: if (<b>expr</b>) {<b>[stmt]</b>} else {<b>[stmt]</b>}<br>
+                            Typing Rules: if (<b>e</b>) {<b>[s_i]</b>} else {<b>[s_i]</b>} <= <b>e</b> : Bool<br>
+                            Code Example:<br>
+                            <i>
+                                if (*x) {<br>
+                                    x <- false;<br>
+                                }<br>
+                                else {<br>
+                                    x <- true;<br>
+                                }
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Loop Statement">2.2.7. Loop Statement</h3>
+                        <p>
+                            When this Statement is evaluated, it resets <b>break</b> and <b>continue</b> flag, and infinitely clones its body, evaluated it, resets <b>continue</b> flag, and breaks if <b>break</b> flag is set.<br>
+                            Form: loop {<b>[stmt]</b>}<br>
+                            Typing Rules: loop {<b>[s_i]</b>}<br>
+                            Code Example:<br>
+                            <i>
+                                loop {<br>
+                                    x <- succ *x;<br>
+                                }
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Break Statement">2.2.8. Break Statement</h3>
+                        <p>
+                            When this Statement is evaluated, is sets the <b>break</b> flag.<br>
+                            Form: break<br>
+                            Typing Rules: break<br>
+                            Code Example:<br>
+                            <i>
+                                loop {<br>
+                                    x <- *i i+ 1;<br>
+                                    if (x i= 10) {<br>
+                                        break;<br>
+                                    };<br>
+                                }
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Continue Statement">2.2.9. Continue Statement</h3>
+                        <p>
+                            When this Statement is evaluated, is sets the <b>continue</b> flag.<br>
+                            Form: continue<br>
+                            Typing Rules: continue<br>
+                            Code Example:<br>
+                            <i>
+                                loop {<br>
+                                    x <- *i i+ 1;<br>
+                                    if (x i< 10) {<br>
+                                        continue;<br>
+                                    };<br>
+                                    break;<br>
+                                }
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Return Statement">2.2.10. Return Statement</h3>
+                        <p>
+                            When this Statement is evaluated, is sets the <b>return</b> flag.<br>
+                            Form: return<br>
+                            Typing Rules: return<br>
+                            Code Example:<br>
+                            <i>
+                                eval fun(Ref Nat x) {<br>
+                                    x <- succ *x;<br>
+                                    return;<br>
+                                    x <- succ *x;<br>
+                                    ret x<br>
+                                } $0
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Eval Statement">2.2.11. Eval Statement</h3>
+                        <p>
+                            When this Statement is evaluated, is evaluates its Expression.<br>
+                            Form: eval <b>expr</b><br>
+                            Typing Rules: eval <b>e</b><br>
+                            Code Example:<br>
+                            <i>
+                                def _ x = ref $0;<br>
+                                eval fun (_ x) {<br>
+                                    x <- succ *x;<br>
+                                }
+                            </i>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+                    </div>
+
+                    <div>
+                        <h3 id="Expressions">2.3. Expressions</h2>
+
+                        <h4 id="ConstTrue Expression">2.3.1. ConstTrue Expression</h3>
+                        <p>
+                            This is Value. One of the values of Bool Type.<br>
+                            Form: true<br>
+                            Typing Rules: true : Bool
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="ConstFalse Expression">2.3.2. ConstFalse Expression</h3>
+                        <p>
+                            This is Value. One of the values of Bool Type.<br>
+                            Form: false<br>
+                            Typing Rules: false : Bool
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="ConstZero Expression">2.3.3. ConstZero Expression</h3>
+                        <p>
+                            This is Value. One of the values of Nat Type.<br>
+                            Form: $0<br>
+                            Typing Rules: $0 : Nat
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="If Expression">2.3.4. If Expression</h3>
+                        <p>
+                            This is Term. It first evaluates its condition Expression, which has to have Bool Type. If the result is ConstTrue, then it evaluates the second Expression and becomes it, otherwise third Expression.<br>
+                            Form: if <b>expr</b> then <b>expr</b> else <b>expr</b><br>
+                            Typing Rules: if <b>e1</b> then <b>e2</b> else <b>e3</b> : <b>t</b> <= <b>e1</b> : Bool & <b>e2</b> : <b>t</b> & <b>e3</b> : <b>t</b><br>
+                            Evaluation Rules:<br>
+                            if <b>T</b> then <b>e1</b> else <b>e2</b> => if <b>V</b> then <b>e1</b> else <b>e2</b><br>
+                            if true then <b>e1</b> else <b>e2</b> => <b>e1</b><br>
+                            if false then <b>e1</b> else <b>e2</b> => <b>e2</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Succ Expression">2.3.5. Succ Expression</h3>
+                        <p>
+                            This is SemiTerm. It first evaluates its Expression, which has to have Nat Type. If the result is Pred, then it becomes its value.<br>
+                            Form: succ <b>expr</b><br>
+                            Typing Rules: succ <b>e</b> : Nat <= <b>e</b> : Nat<br>
+                            Evaluation Rules:<br>
+                            succ <b>T</b> => succ <b>V</b><br>
+                            succ pred <b>e</b> => <b>e</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Pred Expression">2.3.6. Pred Expression</h3>
+                        <p>
+                            This is Term. It first evaluates its Expression, which has to have Nat Type. If the result is Succ or ConstZero, then it becomes its value.<br>
+                            Form: pred <b>expr</b><br>
+                            Typing Rules: pred <b>e</b> : Nat <= <b>e</b> : Nat<br>
+                            Evaluation Rules:<br>
+                            pred <b>T</b> => pred <b>V</b><br>
+                            pred succ <b>e</b> => <b>e</b><br>
+                            pred $0 => $0
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="IsZero Expression">2.3.7. IsZero Expression</h3>
+                        <p>
+                            This is Term. It first evaluates its Expression, which has to have Nat Type. If the result is ConstZero, then it becomes ConstTrue, otherwise ConstFalse.<br>
+                            Form: iszero <b>expr</b><br>
+                            Typing Rules: iszero <b>e</b> : Bool <= <b>e</b> : Nat<br>
+                            Evaluation Rules:<br>
+                            iszero <b>T</b> => iszero <b>V</b><br>
+                            iszero $0 => true<br>
+                            iszero succ <b>e</b> => false
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Var Expression">2.3.8. Var Expression</h3>
+                        <p>
+                            This is Term. It becomes corresponding value from the local context.<br>
+                            Form: <b>ident</b><br>
+                            Typing Rules: <b>i</b> : <b>t</b> &gt <b>i</b> : <b>t</b><br>
+                            Evaluation Rules:<br>
+                            <b>i</b> = <b>e</b> &gt <b>i</b> => <b>e</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Abstraction Expression">2.3.9. Abstraction Expression</h3>
+                        <p>
+                            This is Value.<br>
+                            Form: fun (<b>type</b> <b>ident</b>) { <b>[stmt]</b> ret <b>expr</b> }<br>
+                            Typing Rules: fun (<b>t1</b> <b>i</b>) { <b>[s]</b> ret <b>e</b> } : <b>t1</b> -> <b>t2</b> <= <b>i</b> : <b>t1</b> &gt <b>e</b> : <b>t2</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="MultiAbstraction Expression">2.3.10. MultiAbstraction Expression</h3>
+                        <p>
+                            This Expression is evaluated during Assemble Stage. It replaces abstraction with several arguments to nested abstractions with one argument.<br>
+                            Form: fun (<b>[type</b> <b>expr]</b>) { <b>[stmt]</b> ret <b>expr</b> }<br>
+                            Demonstration:
+                            <ol>
+                                <li>Before: <i>fun (Nat x, Bool y) { ret x }</i></li>
+                                <li>After: <i>fun (Nat x) { ret fun (Nat y) { ret x } }</i></li>
+                            </ol>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Application Expression">2.3.11. Application Expression</h3>
+                        <p>
+                            This is Term. It resets <b>return</b> flag, evaluates its left Expression and then substitutes right Expression into left Expression instead of its Identifier, and then evaluates it.<br>
+                            Form: <b>expr</b> <b>expr</b><br>
+                            Typing Rules: <b>e1</b> <b>e2</b> : <b>t2</b> <= <b>e1</b> : <b>t1</b> -> <b>t2</b> & <b>e2</b> : <b>t2</b><br>
+                            Evaluation Rules:<br>
+                            <b>T</b> <b>e</b> => <b>V</b> <b>e</b><br>
+                            fun (<b>t</b> <b>i</b>) { <b>[s]</b> ret <b>e1</b> } <b>e2</b> => [<b>i</b> |-> <b>e2</b>] <b>[s]</b> & [<b>i</b> |-> <b>e2</b>] <b>e1</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="TypeAbstraction Expression">2.3.12. TypeAbstraction Expression</h3>
+                        <p>
+                            This Expression is evaluated during Typechecking Stage. It implements <b>System F</b> feature. It evaluated its Expression, then runs <b>Unification</b> and checks, that there is no Constraint for its Identifier.<br>
+                            Form: uni <b>ident</b> ~> <b>expr</b><br>
+                            Typing Rules: uni <b>i</b> ~> <b>e</b> : %<b>i</b>.<b>t</b> <= <b>i</b> &gt <b>e</b> : <b>t</b> & Unification</br>
+                            Evaluation Rules:<br>
+                            uni <b>i</b> ~> <b>T</b> => uni <b>i</b> ~> <b>V</b><br>
+                            uni <b>i</b> ~> <b>e</b> => <b>e</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="TypeApplication Expression">2.3.13. TypeApplication Expression</h3>
+                        <p>
+                            This Expression is evaluated during Typechecking Stage. It implements <b>System F</b> feature. It evaluates its Expression, which has to be TypeAbstraction, then substitutes its Type into Expression Type instead of its Identifier.<br>
+                            Form: <b>expr</b> [<b>type</b>]<br>
+                            Typing Rules: uni <b>i</b> ~> <b>e</b> [<b>t1</b>] : [<b>i</b> |-> <b>t1</b>] <b>t2</b> <= <b>e</b> : %<b>i</b>.<b>t2</b><br>
+                            Evaluation Rules:<br>
+                            <b>T</b> [<b>t</b>] => <b>V</b> [<b>t</b>]<br>
+                            <b>e</b> [<b>t</b>] => <b>e</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Fix Expression">2.3.14. Fix Expression</h3>
+                        <p>
+                            This is Term. It propagates itself in its Expression, which has to be Abstraction, and then evaluates it.<br>
+                            Form: fix <b>expr</b><br>
+                            Typing Rules: fix <b>e</b> : <b>t</b> <= <b>e</b> : <b>t</b> -> <b>t</b><br>
+                            Evaluation Rules:<br>
+                            fix fun (<b>t</b> <b>i</b>) { <b>[s]</b> ret <b>e</b> } => fun (<b>t</b> <b>i</b>) { <b>[s]</b> ret fix <b>e</b> }
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Where Expression">2.3.15. Where Expression</h3>
+                        <p>
+                            This is Term. It substitutes its where Expression into body Expression instead of Identifier, and then evaluates it.<br>
+                            Form: <b>expr</b> where <b>type</b> <b>ident</b> = <b>expr</b><br>
+                            Typing Rules: <b>e1</b> where <b>t1</b> <b>i</b> = <b>e2</b> : <b>t2</b> <= <b>e2</b> : <b>t1</b> & <b>i</b> : <b>t1</b> &gt <b>e1</b> : <b>t1</b> -> <b>t2</b><br>
+                            Evaluation Rules:<br>
+                            <b>e1</b> where <b>t1</b> <b>i</b> = <b>e2</b> => [<b>i</b> |-> <b>e2</b>] <b>e1</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="MultiWhere Expression">2.3.16. MultiWhere Expression</h3>
+                        <p>
+                            This Expression is evaluated during Assemble Stage. It replaces where with several definitions to nested wheres with one definition.<br>
+                            Form: <b>expr</b> where { <b>[type</b> <b>ident</b> = <b>expr]</b> }<br>
+                            Demonstration:
+                            <ol>
+                                <li>Before: <i>x y where { _ x = fun (_ x) { ret succ y }, _ y = $0 }</i></li>
+                                <li>After: <i>x y where _ x = fun (_ x) { ret succ y } where _ y = $0</i></li>
+                            </ol>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Reference Expression">2.3.17. Reference Expression</h3>
+                        <p>
+                            This is Term. It evaluates its Expression, then allocates storage and clones to it its Expression.<br>
+                            Form: ref <b>expr</b><br>
+                            Typing Rules: ref <b>e</b> : Ref <b>t</b> <= <b>e</b> : <b>t</b><br>
+                            Evaluation Rules:<br>
+                            ref <b>T</b> => ref <b>V</b><br>
+                            ref <b>e</b> => ref <b>meta</b> ^ <b>meta</b> = <b>e</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Dereference Expression">2.3.18. Dereference Expression</h3>
+                        <p>
+                            This is Term. It evaluates its Expression, which has to have Ref Type, and then becomes a pointer to appropriate location in storage.<br>
+                            Form: * <b>expr</b><br>
+                            Typing Rules: * <b>e</b> : <b>t</b> <= <b>e</b> : Ref <b>t</b><br>
+                            Evaluation Rules:<br>
+                            * <b>T</b> => * <b>V</b><br>
+                            * <b>ref</b> <b>meta</b> => #<b>meta</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Tuple Expression">2.3.19. Tuple Expression</h3>
+                        <p>
+                            This is Value.<br>
+                            Form: &lt<b>[expr]</b>&gt<br>
+                            Typing Rules: &lt<b>[e_i]</b>&gt : &lt<b>[t_i]</b>&gt <= e_i : t_i
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="TupleGet Expression">2.3.20. TupleGet Expression</h3>
+                        <p>
+                            This is Term. It evaluates its Expression, which has to have Tuple Type, then becomes its appropriate value and evaluates it. The Tuple has 0-indexation.<br>
+                            Form: <b>expr</b>.<b>integer</b><br>
+                            Typing Rules: <b>e</b>.<b>int</b> : <b>t</b> <= <b>e</b> : &lt<b>[t_i]</b>&gt & <b>t</b> = <b>t_int</b><br>
+                            Evaluation Rules:<br>
+                            <b>T</b>.<b>int</b> => <b>V</b>.<b>int</b><br>
+                            &lt<b>[e_i]</b>&gt.<b>int</b> => <b>e_int</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Record Expression">2.3.21. Record Expression</h3>
+                        <p>
+                            This is Value.<br>
+                            Form: {<b>[ident</b> = <b>expr]</b>}<br>
+                            Typing Rules: {<b>[i_i</b> = <b>e_i]</b>} : {<b>[i_i</b> : <b>t_i]</b>} <= <b>e_i</b> : <b>t_i</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="RecordGet Expression">2.3.22. RecordGet Expression</h3>
+                        <p>
+                            This is Term. It evaluated its Expression, which has to have Record Type, then becomes its appropriate field and evaluates it.<br>
+                            Form: <b>expr</b>.<b>ident</b><br>
+                            Typing Rules: <b>e</b>.<b>i</b> : <b>t</b> <= <b>e</b> : {<b>[i_i : t_i]</b>} & <b>t</b> = <b>t_i</b> | <b>i_i</b> = <b>i</b><br>
+                            Evaluation Rules:<br>
+                            <b>T</b>.<b>i</b> => <b>V</b>.<b>i</b><br>
+                            {<b>[i_i</b> = <b>e_i]</b>}.<b>i</b> => <b>e_i</b> | <b>i_i</b> = <b>i</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Variant Expression">2.3.23. Variant Expression</h3>
+                        <p>
+                            This is Value.<br>
+                            Form: &lt<b>ident</b> = <b>expr</b>&gt as &lt<b>[ident</b> : <b>type]</b>&gt<br>
+                            Typing Rules: &lt<b>i</b> : <b>e</b>&gt as &lt<b>[i_i</b> : <b>t_i]</b>&gt : &lt<b>[i_i</b> : <b>t_i]</b>&gt & <b>e</b> : <b>t_i</b> | <b>i_i</b> = <b>i</b><br>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="VariantCase Expression">2.3.24. VariantCase Expression</h3>
+                        <p>
+                            This is Term. It evaluates its Expression, which has to have Variant Type, then becomes its appropriate variant and evaluates it.<br>
+                            Form: case <b>expr</b> of <b>[</b>&lt<b>ident</b> = <b>ident</b>&gt => <b>expr]</b><br>
+                            Typing Rules: case <b>e</b> of <b>[</b>&lt<b>i_i1</b> = <b>i_i2</b>&gt => <b>e_i]</b> : <b>t</b> <= <b>e</b> : &lt<b>[i_i</b> : <b>t_i]</b>&gt & <b>i_i2</b> : <b>t_i</b> | <b>i_i</b> = <b>i_i1</b>  > <b>e_i</b> : <b>t</b><br>
+                            Evaluation Rules:<br>
+                            case <b>T</b> of <b>[</b>&lt<b>i_i1</b> = <b>i_i2</b>&gt => <b>e_i</b>] => case <b>V</b> of <b>[</b>&lt<b>i_i1</b> = <b>i_i2</b>&gt => <b>e_i</b>]<br>
+                            case &lt<b>i</b> : <b>e</b>&gt as &lt<b>[i_i</b> : <b>e_i]</b>&gt of <b>[</b>&lt<b>i_i1</b> = <b>i_i2</b>&gt => <b>e_i]</b> => [<b>i_i2</b> |-> <b>e</b>]<b>e_i</b> | <b>i_i1</b> = <b>i</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Array Expression">2.3.25. Array Expression</h3>
+                        <p>
+                            This is Term. It evaluates its Expressions, which have to have same Type.<br>
+                            Form: [<b>[expr]</b>]<br>
+                            Typing Rules: [<b>[e_i]</b>] : [<b>t</b>] <= <b>e_i</b> : <b>t</b><br>
+                            Evaluation Rules:<br>
+                            [<b>[..T..]</b>] => [<b>[..V..]</b>]
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="ArrayGet Expression">2.3.26. ArrayGet Expression</h3>
+                        <p>
+                            This is Term. It evaluates its left Expression, which has to have Ref to Array Type, then evaluates right Expression, which has to have Int Type, and then becomes a pointer to appropriate location in storage. The Array has 0-indexation.<br>
+                            Form: get (<b>expr</b>, <b>expr</b>)<br>
+                            Typing Rules: get (<b>e1</b>, <b>e2</b>) : <b>t</b> <= <b>e1</b> : Ref [<b>t</b>] & <b>e2</b> : Int<br>
+                            Evaluation Rules:<br>
+                            get (<b>T</b>, <b>e</b>) => get (<b>V</b>, <b>e</b>)<br>
+                            get (<b>V</b>, <b>T</b>) => get (<b>V</b>, <b>V</b>)<br>
+                            get (ref <b>meta</b>, <b>int</b>) => #<b>meta</b>.get <b>int</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="ArrayPush Expression">2.3.27. ArrayPush Expression</h3>
+                        <p>
+                            This is Term. It evaluates its left Expression, which has to have Ref to Array Type, then evaluates right Expression, which has to have Type of array argument, then pushes its right Expression into back of array, and then becomes ConstTrue.<br>
+                            Form: push (<b>expr</b>, <b>expr</b>)<br>
+                            Typing Rules: push (<b>e1</b>, <b>e2</b>) : Bool <= <b>e1</b> : Ref [<b>t</b>] & <b>e2</b> : <b>t</b><br>
+                            Evaluation Rules:<br>
+                            push (<b>T</b>, <b>e</b>) => push (<b>V</b>, <b>e</b>)<br>
+                            push (<b>V</b>, <b>T</b>) => push (<b>V</b>, <b>V</b>)<br>
+                            push (ref <b>meta</b>, <b>e</b>) => true & #<b>meta</b>.push <b>e</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="ArrayPop Expression">2.3.28. ArrayPop Expression</h3>
+                        <p>
+                            This is Term. It evaluates its Expression, which has to have Ref to Array Type, then pops last element of array, and then becomes ConstTrue.<br>
+                            Form: pop (<b>expr</b>)<br>
+                            Typing Rules: pop (<b>e</b>) : Bool <= <b>e</b> : Ref [<b>t</b>]<br>
+                            Evaluation Rules:<br>
+                            pop (<b>T</b>) => pop (<b>V</b>)<br>
+                            pop (ref <b>meta</b>) => true & #<b>meta</b>.pop
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="ArrayLen Expression">2.3.29. ArrayLen Expression</h3>
+                        <p>
+                            This is Term. It evaluates its Expression, which has to have Ref to Array Type, then becomes ConstInt, equal to the length of the array.<br>
+                            Form: len (<b>expr</b>)<br>
+                            Typing Rules: len (<b>e</b>) : Int <= <b>e</b> : Ref [<b>t</b>]<br>
+                            Evaluation Rules:<br>
+                            len (<b>T</b>) => len (<b>V</b>)<br>
+                            len (ref <b>meta</b>) => ConstInt #<b>meta</b>.len
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="ConstInt Expression">2.3.30. ConstInt Expression</h3>
+                        <p>
+                            This is Value. It is 32-bit signed integer.<br>
+                            Form: <b>integer</b><br>
+                            Typing Rules: <b>int</b> : Int
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="ToInt Expression">2.3.31. ToInt Expression</h3>
+                        <p>
+                            This is Term. It evaluated its Expression, which has to have Real Type, then becomes ConstInt, equal to value of Real casted to int.<br>
+                            Form: toInt (<b>expr</b>)<br>
+                            Typing Rules: toInt (<b>e</b>) : Int <= e : Real<br>
+                            Evaluation Rules:<br>
+                            toInt (<b>T</b>) => toInt (<b>V</b>)<br>
+                            toInt (ConstReal <b>value</b>) => ConstInt (int)<b>value</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="ConstReal Expression">2.3.32. ConstReal Expression</h3>
+                        <p>
+                            This is Value. It is 64-bit floating-point number.<br>
+                            Form: <b>double</b><br>
+                            Typing Rules: <b>dbl</b> : Real
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="ToReal Expression">2.3.33. ToReal Expression</h3>
+                        <p>
+                            This is Term. It evaluated its Expression, which has to have Int Type, then becomes ConstReal, equal to value of Int casted to double.<br>
+                            Form: toReal (<b>expr</b>)<br>
+                            Typing Rules: toReal (<b>e</b>) : Real <= e : Int<br>
+                            Evaluation Rules:<br>
+                            toReal (<b>T</b>) => toReal (<b>V</b>)<br>
+                            toReal (ConstInt <b>val</b>) => ConstReal (double)<b>val</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="Binary Operations">2.3.34. Binary Operations</h3>
+                        <p>
+                            These are Terms with same form.
+                            <table border="1">
+                                <tr>
+                                    <td>Expression Name</td>
+                                    <td>Expression Form</td>
+                                    <td>Expression Typing Rules</td>
+                                    <td>Expression Evaluation Rules</td>
+                                </tr>
+                                <tr>
+                                    <td>AddInt</td>
+                                    <td><b>expr</b> i+ <b>expr</b></td>
+                                    <td><b>e1</b> i+ <b>e2</b> : Int <= <b>e1</b> : Int & <b>e2</b> : Int</td>
+                                    <td>
+                                        <b>T</b> i+ <b>e</b> => <b>V</b> i+ <b>e</b><br>
+                                        <b>V</b> i+ <b>T</b> => <b>V</b> i+ <b>V</b><br>
+                                        ConstInt <b>int1</b> i+ ConstInt <b>int2</b> => ConstInt (<b>int1</b> + <b>int2</b>)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>SubInt</td>
+                                    <td><b>expr</b> i- <b>expr</b></td>
+                                    <td><b>e1</b> i- <b>e2</b> : Int <= <b>e1</b> : Int & <b>e2</b> : Int</td>
+                                    <td>
+                                        <b>T</b> i- <b>e</b> => <b>V</b> i- <b>e</b><br>
+                                        <b>V</b> i- <b>T</b> => <b>V</b> i- <b>V</b><br>
+                                        ConstInt <b>int1</b> i- ConstInt <b>int2</b> => ConstInt (<b>int1</b> - <b>int2</b>)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>MulInt</td>
+                                    <td><b>expr</b> i* <b>expr</b></td>
+                                    <td><b>e1</b> i* <b>e2</b> : Int <= <b>e1</b> : Int & <b>e2</b> : Int</td>
+                                    <td>
+                                        <b>T</b> i* <b>e</b> => <b>V</b> i* <b>e</b><br>
+                                        <b>V</b> i* <b>T</b> => <b>V</b> i* <b>V</b><br>
+                                        ConstInt <b>int1</b> i* ConstInt <b>int2</b> => ConstInt (<b>int1</b> * <b>int2</b>)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>DivInt</td>
+                                    <td><b>expr</b> i/ <b>expr</b></td>
+                                    <td><b>e1</b> i/ <b>e2</b> : Int <= <b>e1</b> : Int & <b>e2</b> : Int</td>
+                                    <td>
+                                        <b>T</b> i/ <b>e</b> => <b>V</b> i/ <b>e</b><br>
+                                        <b>V</b> i/ <b>T</b> => <b>V</b> i/ <b>V</b><br>
+                                        ConstInt <b>int1</b> i/ ConstInt <b>int2</b> => ConstInt (<b>int1</b> / <b>int2</b>)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>EquInt</td>
+                                    <td><b>expr</b> i= <b>expr</b></td>
+                                    <td><b>e1</b> i= <b>e2</b> : Bool <= <b>e1</b> : Int & <b>e2</b> : Int</td>
+                                    <td>
+                                        <b>T</b> i= <b>e</b> => <b>V</b> i= <b>e</b><br>
+                                        <b>V</b> i= <b>T</b> => <b>V</b> i= <b>V</b><br>
+                                        ConstInt <b>int1</b> i= ConstInt <b>int2</b> => ConstBool (<b>int1</b> == <b>int2</b>)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>LesInt</td>
+                                    <td><b>expr</b> i< <b>expr</b></td>
+                                    <td><b>e1</b> i< <b>e2</b> : Bool <= <b>e1</b> : Int & <b>e2</b> : Int</td>
+                                    <td>
+                                        <b>T</b> i< <b>e</b> => <b>V</b> i< <b>e</b><br>
+                                        <b>V</b> i< <b>T</b> => <b>V</b> i< <b>V</b><br>
+                                        ConstInt <b>int1</b> i< ConstInt <b>int2</b> => ConstBool (<b>int1</b> < <b>int2</b>)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>AddReal</td>
+                                    <td><b>expr</b> r+ <b>expr</b></td>
+                                    <td><b>e1</b> r+ <b>e2</b> : Real <= <b>e1</b> : Real & <b>e2</b> : Real</td>
+                                    <td>
+                                        <b>T</b> r+ <b>e</b> => <b>V</b> r+ <b>e</b><br>
+                                        <b>V</b> r+ <b>T</b> => <b>V</b> r+ <b>V</b><br>
+                                        ConstReal <b>dbl1</b> r+ ConstReal <b>dbl2</b> => ConstReal (<b>dbl1</b> + <b>dbl2</b>)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>SubReal</td>
+                                    <td><b>expr</b> r- <b>expr</b></td>
+                                    <td><b>e1</b> r- <b>e2</b> : Real <= <b>e1</b> : Real & <b>e2</b> : Real</td>
+                                    <td>
+                                        <b>T</b> r- <b>e</b> => <b>V</b> r- <b>e</b><br>
+                                        <b>V</b> r- <b>T</b> => <b>V</b> r- <b>V</b><br>
+                                        ConstReal <b>dbl1</b> r- ConstReal <b>dbl2</b> => ConstReal (<b>dbl1</b> - <b>dbl2</b>)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>MulReal</td>
+                                    <td><b>expr</b> r* <b>expr</b></td>
+                                    <td><b>e1</b> r* <b>e2</b> : Real <= <b>e1</b> : Real & <b>e2</b> : Real</td>
+                                    <td>
+                                        <b>T</b> r* <b>e</b> => <b>V</b> r* <b>e</b><br>
+                                        <b>V</b> r* <b>T</b> => <b>V</b> r* <b>V</b><br>
+                                        ConstReal <b>dbl1</b> r* ConstReal <b>dbl2</b> => ConstReal (<b>dbl1</b> * <b>dbl2</b>)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>DivReal</td>
+                                    <td><b>expr</b> r/ <b>expr</b></td>
+                                    <td><b>e1</b> r/ <b>e2</b> : Real <= <b>e1</b> : Real & <b>e2</b> : Real</td>
+                                    <td>
+                                        <b>T</b> r/ <b>e</b> => <b>V</b> r/ <b>e</b><br>
+                                        <b>V</b> r/ <b>T</b> => <b>V</b> r/ <b>V</b><br>
+                                        ConstReal <b>dbl1</b> r/ ConstReal <b>dbl2</b> => ConstReal (<b>dbl1</b> / <b>dbl2</b>)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>EquReal</td>
+                                    <td><b>expr</b> r= <b>expr</b></td>
+                                    <td><b>e1</b> r= <b>e2</b> : Bool <= <b>e1</b> : Real & <b>e2</b> : Real</td>
+                                    <td>
+                                        <b>T</b> r= <b>e</b> => <b>V</b> r= <b>e</b><br>
+                                        <b>V</b> r= <b>T</b> => <b>V</b> r= <b>V</b><br>
+                                        ConstReal <b>dbl1</b> r= ConstReal <b>dbl2</b> => ConstBool (<b>dbl1</b> == <b>dbl2</b>)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>LesReal</td>
+                                    <td><b>expr</b> r< <b>expr</b></td>
+                                    <td><b>e1</b> r< <b>e2</b> : Bool <= <b>e1</b> : Real & <b>e2</b> : Real</td>
+                                    <td>
+                                        <b>T</b> r< <b>e</b> => <b>V</b> r< <b>e</b><br>
+                                        <b>V</b> r< <b>T</b> => <b>V</b> r< <b>V</b><br>
+                                        ConstReal <b>dbl1</b> r< ConstReal <b>dbl2</b> => ConstBool (<b>dbl1</b> < <b>dbl2</b>)
+                                    </td>
+                                </tr>
+                            </table>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="ReadInt Expression">2.3.35. ReadInt Expression</h3>
+                        <p>
+                            This is Term. It reads 32-bit unsigned integer from <b>stdin</b>, and becomes ConstInt, equal to value read.<br>
+                            Form: readInt<br>
+                            Typing Rules: readInt : Int<br>
+                            Evaluation Rules:<br>
+                            readInt => ConstInt (read <b>int</b>)
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="ReadReal Expression">2.3.36. ReadReal Expression</h3>
+                        <p>
+                            This is Term. It reads 64-bit floating-point number from <b>stdin</b>, and becomes ConstReal, equal to value read.<br>
+                            Form: readReal<br>
+                            Typing Rules: readReal : Real<br>
+                            Evaluation Rules:<br>
+                            readReal => ConstReal (read <b>dbl</b>)
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="WriteInt Expression">2.3.37. WriteInt Expression</h3>
+                        <p>
+                            This is Term. It evaluates its Expression, which has to have Int Type, writes 32-bit unsigned integer equal to value of ConstInt to <b>stdout</b>, and then becomes ConstTrue.<br>
+                            Form: writeInt <b>expr</b><br>
+                            Typing Rules: writeInt <b>e</b> : Bool <= <b>e</b> : Int<br>
+                            Evaluation Rules:<br>
+                            writeInt <b>T</b> => writeInt <b>V</b><br>
+                            writeInt ConstInt <b>int</b> => true & write <b>int</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="WriteReal Expression">2.3.38. WriteReal Expression</h3>
+                        <p>
+                            This is Term. It evaluates its Expression, which has to have Real Type, writes 64-bit floating-point number equal to value of ConstReal to <b>stdout</b>, and then becomes ConstTrue.<br>
+                            Form: writeReal <b>expr</b><br>
+                            Typing Rules: writeReal <b>e</b> : Bool <= <b>e</b> : Real<br>
+                            Evaluation Rules:<br>
+                            writeReal <b>T</b> => writeReal <b>V</b><br>
+                            writeReal ConstReal <b>dbl</b> => true & write <b>dbl</b>
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+        </footer>
+    </body>
+</html>

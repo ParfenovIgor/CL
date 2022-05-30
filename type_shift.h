@@ -9,6 +9,7 @@ void TypeShift_FunType      (Type*&, int);
 void TypeShift_TupleType    (Type*&, int);
 void TypeShift_RecordType   (Type*&, int);
 void TypeShift_VariantType  (Type*&, int);
+void TypeShift_ArrayType    (Type*&, int);
 void TypeShift_IntType      (Type*&, int);
 void TypeShift_RealType     (Type*&, int);
 
@@ -43,6 +44,9 @@ void TypeShift(Type *&expr, int shift) {
     if (dynamic_cast <VariantType*> (expr)) {
         TypeShift_VariantType(expr, shift); return;
     }
+    if (dynamic_cast <ArrayType*> (expr)) {
+        TypeShift_ArrayType(expr, shift); return;
+    }
     if (dynamic_cast <IntType*> (expr)) {
         TypeShift_IntType(expr, shift); return;
     }
@@ -75,22 +79,26 @@ void TypeShift_FunType(Type *&expr, int shift) {
 }
 void TypeShift_TupleType(Type *&expr, int shift) {
     TupleType *tuple_type = dynamic_cast <TupleType*> (expr);
-    for (ListType::iterator i = tuple_type->listtype_->begin() ; i != tuple_type->listtype_->end(); i++)
+    for (ListType::iterator i = tuple_type->listtype_->begin(); i != tuple_type->listtype_->end(); i++)
         TypeShift(*i, shift);
 }
 void TypeShift_RecordType(Type *&expr, int shift) {
     RecordType *record_type = dynamic_cast <RecordType*> (expr);
-    for (ListRecordTypeField_::iterator i = record_type->listrecordtypefield__->begin() ; i != record_type->listrecordtypefield__->end(); i++) {
+    for (ListRecordTypeField_::iterator i = record_type->listrecordtypefield__->begin(); i != record_type->listrecordtypefield__->end(); i++) {
         RecordTypeField *record_type_field = dynamic_cast <RecordTypeField*> (*i);
         TypeShift(record_type_field->type_, shift);
     }
 }
 void TypeShift_VariantType(Type *&expr, int shift) {
     VariantType *variant_type = dynamic_cast <VariantType*> (expr);
-    for (ListVariantTypeField_::iterator i = variant_type->listvarianttypefield__->begin() ; i != variant_type->listvarianttypefield__->end(); i++) {
+    for (ListVariantTypeField_::iterator i = variant_type->listvarianttypefield__->begin(); i != variant_type->listvarianttypefield__->end(); i++) {
         VariantTypeField *variant_type_field = dynamic_cast <VariantTypeField*> (*i);
         TypeShift(variant_type_field->type_, shift);
     }
+}
+void TypeShift_ArrayType(Type *&expr, int shift) {
+    ArrayType *array_type = dynamic_cast <ArrayType*> (expr);
+    TypeShift(array_type->type_, shift);
 }
 void TypeShift_IntType(Type *&expr, int shift) { }
 void TypeShift_RealType(Type *&expr, int shift) { }

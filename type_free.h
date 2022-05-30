@@ -9,6 +9,7 @@ void TypeFree_FunType       (Type*&, Ident&, bool&);
 void TypeFree_TupleType     (Type*&, Ident&, bool&);
 void TypeFree_RecordType    (Type*&, Ident&, bool&);
 void TypeFree_VariantType   (Type*&, Ident&, bool&);
+void TypeFree_ArrayType     (Type*&, Ident&, bool&);
 void TypeFree_IntType       (Type*&, Ident&, bool&);
 void TypeFree_RealType      (Type*&, Ident&, bool&);
 
@@ -42,6 +43,9 @@ void TypeFree(Type *&expr, Ident &ident, bool &result) {
     }
     if (dynamic_cast <VariantType*> (expr)) {
         TypeFree_VariantType(expr, ident, result); return;
+    }
+    if (dynamic_cast <ArrayType*> (expr)) {
+        TypeFree_ArrayType(expr, ident, result); return;
     }
     if (dynamic_cast <IntType*> (expr)) {
         TypeFree_IntType(expr, ident, result); return;
@@ -77,22 +81,26 @@ void TypeFree_FunType(Type *&expr, Ident &ident, bool &result) {
 }
 void TypeFree_TupleType(Type *&expr, Ident &ident, bool &result) {
     TupleType *tuple_type = dynamic_cast <TupleType*> (expr);
-    for (ListType::iterator i = tuple_type->listtype_->begin() ; i != tuple_type->listtype_->end(); i++)
+    for (ListType::iterator i = tuple_type->listtype_->begin(); i != tuple_type->listtype_->end(); i++)
         TypeFree(*i, ident, result);
 }
 void TypeFree_RecordType(Type *&expr, Ident &ident, bool &result) {
     RecordType *record_type = dynamic_cast <RecordType*> (expr);
-    for (ListRecordTypeField_::iterator i = record_type->listrecordtypefield__->begin() ; i != record_type->listrecordtypefield__->end(); i++) {
+    for (ListRecordTypeField_::iterator i = record_type->listrecordtypefield__->begin(); i != record_type->listrecordtypefield__->end(); i++) {
         RecordTypeField *record_type_field = dynamic_cast <RecordTypeField*> (*i);
         TypeFree(record_type_field->type_, ident, result);
     }
 }
 void TypeFree_VariantType(Type *&expr, Ident &ident, bool &result) {
     VariantType *variant_type = dynamic_cast <VariantType*> (expr);
-    for (ListVariantTypeField_::iterator i = variant_type->listvarianttypefield__->begin() ; i != variant_type->listvarianttypefield__->end(); i++) {
+    for (ListVariantTypeField_::iterator i = variant_type->listvarianttypefield__->begin(); i != variant_type->listvarianttypefield__->end(); i++) {
         VariantTypeField *variant_type_field = dynamic_cast <VariantTypeField*> (*i);
         TypeFree(variant_type_field->type_, ident, result);
     }
+}
+void TypeFree_ArrayType(Type *&expr, Ident &ident, bool &result) {
+    ArrayType *array_type = dynamic_cast <ArrayType*> (expr);
+    TypeFree(array_type->type_, ident, result);
 }
 void TypeFree_IntType(Type *&expr, Ident &ident, bool &result) { }
 void TypeFree_RealType(Type *&expr, Ident &ident, bool &result) { }

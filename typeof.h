@@ -1,271 +1,83 @@
-using ContextIT = std::vector < std::pair <Ident, Type*> >;
-using ContextI = std::vector <Ident>;
-using Constraint = std::vector < std::pair <Type*, Type*> >;
+void TypeOf                 (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_ProgramRoot     (ProgramRoot*, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
 
-void TypeUnify              (Constraint &, std::vector < std::pair <Ident, Type*> >&);
-bool TypeEqual              (Type*, Type*);
+void TypeOf_ConstTrue       (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_ConstFalse      (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_ConstZero       (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_If              (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Succ            (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Pred            (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_IsZero          (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Var             (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Abstraction     (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Application     (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_TypeAbstraction (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_TypeApplication (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Fix             (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Where           (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Reference       (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Dereference     (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Tuple           (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_TupleGet        (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Record          (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_RecordGet       (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Variant         (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_VariantCase     (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Array           (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_ArrayGet        (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_ArrayPush       (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_ArrayPop        (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_ArrayLen        (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
 
-void TypeOf                 (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_ProgramRoot     (ProgramRoot*, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_ConstTrue       (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_ConstFalse      (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_ConstZero       (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_If              (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Succ            (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Pred            (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_IsZero          (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Var             (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Abstraction     (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Application     (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_TypeAbstraction (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_TypeApplication (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Fix             (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Where           (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Reference       (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Dereference     (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Tuple           (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_TupleGet        (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Record          (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_RecordGet       (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Variant         (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_VariantCase     (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Array           (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_ArrayGet        (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_ArrayPush       (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_ArrayPop        (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_ArrayLen        (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
+void TypeOf_ConstInt        (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_ToInt           (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_AddInt          (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_SubInt          (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_MulInt          (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_DivInt          (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_EquInt          (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_LesInt          (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
 
-void TypeOf_ConstInt        (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_ToInt           (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_AddInt          (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_SubInt          (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_MulInt          (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_DivInt          (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_EquInt          (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_LesInt          (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
+void TypeOf_ConstReal       (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_ToReal          (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_AddReal         (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_SubReal         (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_MulReal         (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_DivReal         (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_EquReal         (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_LesReal         (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
 
-void TypeOf_ConstReal       (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_ToReal          (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_AddReal         (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_SubReal         (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_MulReal         (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_DivReal         (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_EquReal         (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_LesReal         (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
+void TypeOf_ReadInt         (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_ReadReal        (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_WriteInt        (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_WriteReal       (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
 
-void TypeOf_ReadInt         (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_ReadReal        (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_WriteInt        (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_WriteReal       (Expr*, Type *&, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
+void TypeOf                 (Statement*, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Definition      (Statement*, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_TypeDefinition  (Statement*, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Assignment      (Statement*, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_IfStatement     (Statement*, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_IfElseStatement (Statement*, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Loop            (Statement*, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Break           (Statement*, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Continue        (Statement*, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Return          (Statement*, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_Eval            (Statement*, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
 
-void TypeOf                 (Statement*, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Definition      (Statement*, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_MoveAssignment  (Statement*, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_CopyAssignment  (Statement*, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_IfStatement     (Statement*, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_IfElseStatement (Statement*, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Loop            (Statement*, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Break           (Statement*, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Continue        (Statement*, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Return          (Statement*, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-void TypeOf_Eval            (Statement*, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
+void TypeOf                 (ListStatement*, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
 
-void TypeOf                 (ListStatement*, ContextIT&, ContextIT&, ContextI&, Constraint&, int&);
-
-void TypeUnify(Constraint &constraint, std::vector < std::pair <Ident, Type*> > &subst) {
-    if (constraint.empty()) return;
-
-    Type *t_1 = constraint.back().first->clone();
-    Type *t_2 = constraint.back().second->clone();
-    constraint.pop_back();
-    
-    if (TypeEqual(t_1, t_2)) {
-        TypeUnify(constraint, subst);
-        return;
-    }
-    
-    if (VarType *var_type = dynamic_cast <VarType*> (t_1)) {
-        bool result = true;
-        TypeFree(t_2, var_type->ident_, result);
-        if (result) {
-            for (auto &c : constraint) {
-                TypeSubstitute(c.first, var_type->ident_, t_2);
-                TypeSubstitute(c.second, var_type->ident_, t_2);
-            }
-            TypeUnify(constraint, subst);
-            subst.push_back({var_type->ident_, t_2});
-            return;
-        }
-    }
-    
-    if (VarType *var_type = dynamic_cast <VarType*> (t_2)) {
-        bool result = true;
-        TypeFree(t_1, var_type->ident_, result);
-        if (result) {
-            for (auto &c : constraint) {
-                TypeSubstitute(c.first, var_type->ident_, t_1);
-                TypeSubstitute(c.second, var_type->ident_, t_1);
-            }
-            TypeUnify(constraint, subst);
-            subst.push_back({var_type->ident_, t_1});
-            return;
-        }
-    }
-
-    RefType *ref_type_1 = dynamic_cast <RefType*> (t_1);
-    RefType *ref_type_2 = dynamic_cast <RefType*> (t_2);
-    if (ref_type_1 && ref_type_2) {
-        constraint.push_back({ref_type_1->type_->clone(), ref_type_2->type_->clone()});
-        TypeUnify(constraint, subst);
-        return;
-    }
-    
-    FunType *fun_type_1 = dynamic_cast <FunType*> (t_1);
-    FunType *fun_type_2 = dynamic_cast <FunType*> (t_2);
-    if (fun_type_1 && fun_type_2) {
-        constraint.push_back({fun_type_1->type_1->clone(), fun_type_2->type_1->clone()});
-        constraint.push_back({fun_type_1->type_2->clone(), fun_type_2->type_2->clone()});
-        TypeUnify(constraint, subst);
-        return;
-    }
-    
-    TupleType *tuple_type_1 = dynamic_cast <TupleType*> (t_1);
-    TupleType *tuple_type_2 = dynamic_cast <TupleType*> (t_2);
-    if (tuple_type_1 && tuple_type_2) {
-        if (tuple_type_1->listtype_->size() != tuple_type_2->listtype_->size())
-            throw "Type Error: could not construct types";
-        for (size_t i = 0; i < tuple_type_1->listtype_->size(); i++) {
-            Type *type_1 = (*(tuple_type_1->listtype_))[i];
-            Type *type_2 = (*(tuple_type_2->listtype_))[i];
-            constraint.push_back(std::make_pair(type_1->clone(), type_2->clone()));
-        }
-        TypeUnify(constraint, subst);
-        return;
-    }
-    
-    RecordType *record_type_1 = dynamic_cast <RecordType*> (t_1);
-    RecordType *record_type_2 = dynamic_cast <RecordType*> (t_2);
-    if (record_type_1 && record_type_2) {
-        if (record_type_1->listrecordtypefield__->size() != record_type_2->listrecordtypefield__->size())
-            throw "Type Error: could not construct types";
-        for (size_t i = 0; i < record_type_1->listrecordtypefield__->size(); i++) {
-            RecordTypeField *field_1 = dynamic_cast <RecordTypeField*> ((*(record_type_1->listrecordtypefield__))[i]);
-            RecordTypeField *field_2 = dynamic_cast <RecordTypeField*> ((*(record_type_2->listrecordtypefield__))[i]);
-            if (field_1->ident_ != field_2->ident_)
-                throw "TypeError: could not construct types";
-            constraint.push_back(std::make_pair(field_1->type_->clone(), field_2->type_->clone()));
-        }
-        TypeUnify(constraint, subst);
-        return;
-    }
-    
-    VariantType *variant_type_1 = dynamic_cast <VariantType*> (t_1);
-    VariantType *variant_type_2 = dynamic_cast <VariantType*> (t_2);
-    if (variant_type_1 && variant_type_2) {
-        if (variant_type_1->listvarianttypefield__->size() != variant_type_2->listvarianttypefield__->size())
-            throw "Type Error: could not construct types";
-        for (size_t i = 0; i < variant_type_1->listvarianttypefield__->size(); i++) {
-            VariantTypeField *field_1 = dynamic_cast <VariantTypeField*> ((*(variant_type_1->listvarianttypefield__))[i]);
-            VariantTypeField *field_2 = dynamic_cast <VariantTypeField*> ((*(variant_type_2->listvarianttypefield__))[i]);
-            if (field_1->ident_ != field_2->ident_)
-                throw "TypeError: could not construct types";
-            constraint.push_back(std::make_pair(field_1->type_->clone(), field_2->type_->clone()));
-        }
-        TypeUnify(constraint, subst);
-        return;
-    }
-    
-    ArrayType *array_type_1 = dynamic_cast <ArrayType*> (t_1);
-    ArrayType *array_type_2 = dynamic_cast <ArrayType*> (t_2);
-    if (array_type_1 && array_type_2) {
-        constraint.push_back({array_type_1->type_->clone(), array_type_2->type_->clone()});
-        TypeUnify(constraint, subst);
-        return;
-    }
-    
-    throw "Type Error: could not constuct types";
-}
-
-bool TypeEqual(Type *type_1, Type *type_2) {
-    if (dynamic_cast <BoolType*> (type_1) && dynamic_cast <BoolType*> (type_2))
-        return true;
-    if (dynamic_cast <NatType*> (type_1) && dynamic_cast <NatType*> (type_2))
-        return true;
-
-    RefType *ref_type_1 = dynamic_cast <RefType*> (type_1);
-    RefType *ref_type_2 = dynamic_cast <RefType*> (type_2);
-    if (ref_type_1 && ref_type_2)
-        return TypeEqual(ref_type_1->type_, ref_type_2->type_);
-
-    VarType *var_type_1 = dynamic_cast <VarType*> (type_1);
-    VarType *var_type_2 = dynamic_cast <VarType*> (type_2);
-    if (var_type_1 && var_type_2)
-        return var_type_1->ident_ == var_type_2->ident_;
-
-    UniType *uni_type_1 = dynamic_cast <UniType*> (type_1);
-    UniType *uni_type_2 = dynamic_cast <UniType*> (type_2);
-    if (uni_type_1 && uni_type_2) 
-        return TypeEqual(uni_type_1->type_, uni_type_2->type_);
-
-    FunType *fun_type_1 = dynamic_cast <FunType*> (type_1);
-    FunType *fun_type_2 = dynamic_cast <FunType*> (type_2);
-    if (fun_type_1 && fun_type_2) 
-        return TypeEqual(fun_type_1->type_1, fun_type_2->type_1) && TypeEqual(fun_type_1->type_2, fun_type_2->type_2);
-
-    TupleType *tuple_type_1 = dynamic_cast <TupleType*> (type_1);
-    TupleType *tuple_type_2 = dynamic_cast <TupleType*> (type_2);
-    if (tuple_type_1 && tuple_type_2) {
-        if (tuple_type_1->listtype_->size() != tuple_type_2->listtype_->size())
-            return false;
-        for (size_t i = 0; i < tuple_type_1->listtype_->size(); i++) {
-            Type *type_1 = (*(tuple_type_1->listtype_))[i];
-            Type *type_2 = (*(tuple_type_2->listtype_))[i];
-            if (!TypeEqual(type_1, type_2))
-                return false;
-        }
-        return true;
-    }
-    
-    RecordType *record_type_1 = dynamic_cast <RecordType*> (type_1);
-    RecordType *record_type_2 = dynamic_cast <RecordType*> (type_2);
-    if (record_type_1 && record_type_2) {
-        if (record_type_1->listrecordtypefield__->size() != record_type_2->listrecordtypefield__->size())
-            return false;
-        for (size_t i = 0; i < record_type_1->listrecordtypefield__->size(); i++) {
-            RecordTypeField *field_1 = dynamic_cast <RecordTypeField*> ((*(record_type_1->listrecordtypefield__))[i]);
-            RecordTypeField *field_2 = dynamic_cast <RecordTypeField*> ((*(record_type_2->listrecordtypefield__))[i]);
-            if (field_1->ident_ != field_2->ident_ ||
-                !TypeEqual(field_1->type_, field_2->type_))
-                return false;
-        }
-        return true;
-    }
-
-    if (dynamic_cast <IntType*> (type_1) && dynamic_cast <IntType*> (type_2))
-        return true;
-    if (dynamic_cast <RealType*> (type_1) && dynamic_cast <RealType*> (type_2))
-        return true;
-
-    ArrayType *array_type_1 = dynamic_cast <ArrayType*> (type_1);
-    ArrayType *array_type_2 = dynamic_cast <ArrayType*> (type_2);
-    if (array_type_1 && array_type_2) 
-        return TypeEqual(array_type_1->type_, array_type_2->type_);
-
-    return false;
-}
-
-void TypeOf(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     if (dynamic_cast <ConstTrue*> (expr)) {
         TypeOf_ConstTrue(expr, type, context_expr, context_local, context_type, constraint, var_num); return;
     }
     if (dynamic_cast <ConstFalse*> (expr)) {
         TypeOf_ConstFalse(expr, type, context_expr, context_local, context_type, constraint, var_num); return;
     }
-    if (dynamic_cast <If*> (expr)) {
-        TypeOf_If(expr, type, context_expr, context_local, context_type, constraint, var_num); return;
-    }
     if (dynamic_cast <ConstZero*> (expr)) {
         TypeOf_ConstZero(expr, type, context_expr, context_local, context_type, constraint, var_num); return;
+    }
+    if (dynamic_cast <If*> (expr)) {
+        TypeOf_If(expr, type, context_expr, context_local, context_type, constraint, var_num); return;
     }
     if (dynamic_cast <Succ*> (expr)) {
         TypeOf_Succ(expr, type, context_expr, context_local, context_type, constraint, var_num); return;
@@ -292,7 +104,7 @@ void TypeOf(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context
         TypeOf_TypeApplication(expr, type, context_expr, context_local, context_type, constraint, var_num); return;
     }
     if (dynamic_cast <Fix*> (expr)) {
-        TypeOf_Fix(expr, type, context_expr,  context_local,context_type, constraint, var_num); return;
+        TypeOf_Fix(expr, type, context_expr, context_local, context_type, constraint, var_num); return;
     }
     if (dynamic_cast <Where*> (expr)) {
         TypeOf_Where(expr, type, context_expr, context_local, context_type, constraint, var_num); return;
@@ -401,18 +213,18 @@ void TypeOf(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context
     }
 }
 
-void TypeOf_ProgramRoot(ProgramRoot *program_root, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_ProgramRoot(ProgramRoot *program_root, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     for (ListStatement::iterator i = program_root->liststatement_->begin(); i != program_root->liststatement_->end(); i++) {
         TypeOf(*i, context_expr, context_local, context_type, constraint, var_num);
     }
 }
-void TypeOf_ConstTrue(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_ConstTrue(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     type = new BoolType();
 }
-void TypeOf_ConstFalse(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_ConstFalse(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     type = new BoolType();
 }
-void TypeOf_If(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_If(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     If *if_ = dynamic_cast <If*> (expr);
     Type *t_1, *t_2, *t_3;
     TypeOf(if_->expr_1, t_1, context_expr, context_local, context_type, constraint, var_num);
@@ -420,33 +232,33 @@ void TypeOf_If(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &cont
     TypeOf(if_->expr_3, t_3, context_expr, context_local, context_type, constraint, var_num);
     constraint.push_back({t_1, new BoolType()});
     constraint.push_back({t_2, t_3});
-    type = t_2;
+    type = t_2->clone();
 }
-void TypeOf_ConstZero(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_ConstZero(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     type = new NatType();
 }
-void TypeOf_Succ(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Succ(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Succ *succ = dynamic_cast <Succ*> (expr);
     Type *t_;
     TypeOf(succ->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
     constraint.push_back({t_, new NatType()});
     type = new NatType();
 }
-void TypeOf_Pred(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Pred(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Pred *pred = dynamic_cast <Pred*> (expr);
     Type *t_;
     TypeOf(pred->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
     constraint.push_back({t_, new NatType()});
     type = new NatType();
 }
-void TypeOf_IsZero(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_IsZero(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     IsZero *is_zero = dynamic_cast <IsZero*> (expr);
     Type *t_;
     TypeOf(is_zero->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
     constraint.push_back({t_, new NatType()});
     type = new BoolType();
 }
-void TypeOf_Var(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Var(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Var *var_ = dynamic_cast <Var*> (expr);
     if (is_nl(var_->ident_)) {
         int pos = (int)context_expr.size() - stoi_nl(var_->ident_) - 1;
@@ -454,36 +266,35 @@ void TypeOf_Var(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &con
     }
     else {
         int pos = find_position_backward(context_local, var_->ident_);
-        if (pos == -1) { throw "Internal Error"; }
         type = context_local[pos].second->clone();
     }
 }
-void TypeOf_Abstraction(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Abstraction(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Abstraction *abstraction = dynamic_cast <Abstraction*> (expr);
     size_t context_size = context_local.size();
+    size_t context_type_size = context_type.size();
     
+    int n;
     if (dynamic_cast <AutoType*> (abstraction->type_)) {
-        int n = var_num;
-        context_expr.push_back({abstraction->ident_, new VarType (itos_meta(var_num++))});
-
-        for (ListStatement::iterator i = abstraction->liststatement_->begin(); i != abstraction->liststatement_->end(); i++) {
-            TypeOf(*i, context_expr, context_local, context_type, constraint, var_num);
-        }
-
-        Type *t_;
-        TypeOf(abstraction->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
-        type = new FunType(new VarType(itos_meta(n)), t_);
+        n = var_num++;
+        context_expr.push_back({abstraction->ident_, new VarType (itos_meta(n))});
     }
     else {
         TypeToNameless(abstraction->type_, context_type);
         context_expr.push_back({abstraction->ident_, abstraction->type_->clone()});
+    }
 
-        for (ListStatement::iterator i = abstraction->liststatement_->begin(); i != abstraction->liststatement_->end(); i++) {
-            TypeOf(*i, context_expr, context_local, context_type, constraint, var_num);
-        }
+    for (ListStatement::iterator i = abstraction->liststatement_->begin(); i != abstraction->liststatement_->end(); i++) {
+        TypeOf(*i, context_expr, context_local, context_type, constraint, var_num);
+    }
 
-        Type *t_;
-        TypeOf(abstraction->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
+    Type *t_;
+    TypeOf(abstraction->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
+
+    if (dynamic_cast <AutoType*> (abstraction->type_)) {
+        type = new FunType(new VarType(itos_meta(n)), t_);
+    }
+    else {
         type = new FunType(abstraction->type_->clone(), t_);
     }
     
@@ -492,32 +303,36 @@ void TypeOf_Abstraction(Expr *expr, Type *&type, ContextIT &context_expr, Contex
         delete context_local.back().second;
         context_local.pop_back();
     }
+    while (context_type.size() > context_type_size) {
+        delete context_type.back().second;
+        context_local.pop_back();
+    }
 }
-void TypeOf_Application(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Application(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Application *application = dynamic_cast <Application*> (expr);
     Type *t_1, *t_2;
     TypeOf(application->expr_1, t_1, context_expr, context_local, context_type, constraint, var_num);
     TypeOf(application->expr_2, t_2, context_expr, context_local, context_type, constraint, var_num);
     int n = var_num++;
-    
+
     constraint.push_back({t_1, new FunType(t_2, new VarType(itos_meta(n)))});
     type = new VarType(itos_meta(n));
 }
-void TypeOf_TypeAbstraction(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_TypeAbstraction(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     TypeAbstraction *type_abstraction = dynamic_cast <TypeAbstraction*> (expr);
-    context_type.push_back(type_abstraction->ident_);
+    context_type.push_back({type_abstraction->ident_, nullptr});
     Type *t_;
     TypeOf(type_abstraction->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
-        
+
     std::vector < std::pair <Ident, Type*> > subst;
     TypeUnify(constraint, subst);
     reverse(subst.begin(), subst.end());
-    
+
     for (auto s : subst) {
         if (is_nl(s.first)) {
             VarType *var_type = dynamic_cast <VarType*> (s.second);
             if (!var_type || !is_meta(var_type->ident_)) {
-                throw "Universal type has constraints";
+                throw "Type Error: Universal Type has Constraints";
             }
             else {
                 TypeSubstitute(t_, var_type->ident_, new VarType (s.first));
@@ -531,7 +346,7 @@ void TypeOf_TypeAbstraction(Expr *expr, Type *&type, ContextIT &context_expr, Co
     type = new UniType("", t_);
     context_type.pop_back();
 }
-void TypeOf_TypeApplication(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_TypeApplication(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     TypeApplication *type_application = dynamic_cast <TypeApplication*> (expr);
     Type *t_;
     TypeOf(type_application->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
@@ -545,7 +360,7 @@ void TypeOf_TypeApplication(Expr *expr, Type *&type, ContextIT &context_expr, Co
         throw "Type Error: Type Application applied to not Type Abstraction";
     }
 }
-void TypeOf_Fix(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Fix(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Fix *fix = dynamic_cast <Fix*> (expr);
     Type *type_;
     TypeOf(fix->expr_, type_, context_expr, context_local, context_type, constraint, var_num);
@@ -557,19 +372,19 @@ void TypeOf_Fix(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &con
         throw "Type Error: Function Type expected in Fix";
     }
 }
-void TypeOf_Where(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Where(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Where *where = dynamic_cast <Where*> (expr);
     std::string str = itos_nl(0);
     Substitute(where->expr_1, str, where->expr_2);
     TypeOf(where->expr_1, type, context_expr, context_local, context_type, constraint, var_num);
 }
-void TypeOf_Reference(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Reference(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Reference *reference = dynamic_cast <Reference*> (expr);
     Type *t_;
     TypeOf(reference->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
     type = new RefType(t_);
 }
-void TypeOf_Dereference(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Dereference(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Dereference *dereference = dynamic_cast <Dereference*> (expr);
     Type *t_;
     TypeOf(dereference->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
@@ -580,7 +395,7 @@ void TypeOf_Dereference(Expr *expr, Type *&type, ContextIT &context_expr, Contex
         throw "Type Error: Dereference applied to not Reference";
     }
 }
-void TypeOf_Tuple(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Tuple(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Tuple *tuple = dynamic_cast <Tuple*> (expr);
     TupleType *tuple_type = new TupleType(new ListType);
     for (ListExpr::iterator i = tuple->listexpr_->begin(); i != tuple->listexpr_->end(); i++) {
@@ -590,7 +405,7 @@ void TypeOf_Tuple(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &c
     }
     type = tuple_type;
 }
-void TypeOf_TupleGet(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_TupleGet(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     TupleGet *tuple_get = dynamic_cast <TupleGet*> (expr);
     Type *type_;
     TypeOf(tuple_get->expr_, type_, context_expr, context_local, context_type, constraint, var_num);
@@ -605,7 +420,7 @@ void TypeOf_TupleGet(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT
         throw "Type Error: Tuple Indexation applied to not Tuple";
     }
 }
-void TypeOf_Record(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Record(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Record *record = dynamic_cast <Record*> (expr);
     RecordType *record_type = new RecordType(new ListRecordTypeField_);
     for (ListRecordField_::iterator i = record->listrecordfield__->begin(); i != record->listrecordfield__->end(); i++) {
@@ -617,7 +432,7 @@ void TypeOf_Record(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &
     }
     type = record_type;
 }
-void TypeOf_RecordGet(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_RecordGet(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     RecordGet *record_get = dynamic_cast <RecordGet*> (expr);
     Type *type_;
     TypeOf(record_get->expr_, type_, context_expr, context_local, context_type, constraint, var_num);
@@ -636,7 +451,7 @@ void TypeOf_RecordGet(Expr *expr, Type *&type, ContextIT &context_expr, ContextI
         throw "Type Error: Record Indexation applied to not Record";
     }
 }
-void TypeOf_Variant(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Variant(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Variant *variant = dynamic_cast <Variant*> (expr);
     if (VariantType *variant_type = dynamic_cast <VariantType*> (variant->type_)) {    
         for (ListVariantTypeField_::iterator i = variant_type->listvarianttypefield__->begin(); i != variant_type->listvarianttypefield__->end(); i++) {
@@ -655,7 +470,7 @@ void TypeOf_Variant(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT 
         throw "Type Error: Variant type annotation is not VariantType";
     }
 }
-void TypeOf_VariantCase(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_VariantCase(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     VariantCase *variant_case = dynamic_cast <VariantCase*> (expr);
     Type *t_;
     TypeOf(variant_case->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
@@ -686,11 +501,17 @@ void TypeOf_VariantCase(Expr *expr, Type *&type, ContextIT &context_expr, Contex
             }
         }
     }
+    else {
+        throw "Type Error: Variant Case applied to not Variant";
+    }
 }
-void TypeOf_Array(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Array(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Array *array = dynamic_cast <Array*> (expr);
     Type *t_1;
     bool first = true;
+    if (array->listexpr_->empty()) {
+        throw "Type Error: const Array could not be empty";
+    }
     for (ListExpr::iterator i = array->listexpr_->begin(); i != array->listexpr_->end(); i++) {
         if (first) {
             TypeOf(*i, t_1, context_expr, context_local, context_type, constraint, var_num);
@@ -704,7 +525,7 @@ void TypeOf_Array(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &c
     }
     type = new ArrayType(t_1);
 }
-void TypeOf_ArrayGet(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_ArrayGet(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     ArrayGet *array_get = dynamic_cast <ArrayGet*> (expr);
     Type *t_1, *t_2;
     TypeOf(array_get->expr_1, t_1, context_expr, context_local, context_type, constraint, var_num);
@@ -720,7 +541,7 @@ void TypeOf_ArrayGet(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT
         throw "Type Error: Array Get is applied to not Reference to Array";
     }
 }
-void TypeOf_ArrayPush(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_ArrayPush(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     ArrayPush *array_push = dynamic_cast <ArrayPush*> (expr);
     Type *t_1, *t_2;
     TypeOf(array_push->expr_1, t_1, context_expr, context_local, context_type, constraint, var_num);
@@ -736,7 +557,7 @@ void TypeOf_ArrayPush(Expr *expr, Type *&type, ContextIT &context_expr, ContextI
         throw "Type Error: Array Push is applied to not Reference to Array";
     }
 }
-void TypeOf_ArrayPop(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_ArrayPop(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     ArrayPop *array_pop = dynamic_cast <ArrayPop*> (expr);
     Type *t_;
     TypeOf(array_pop->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
@@ -744,13 +565,12 @@ void TypeOf_ArrayPop(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT
         if (ArrayType *array_type = dynamic_cast <ArrayType*> (ref_type->type_)) {
             delete t_;
             type = new BoolType();
+            return;
         }
     }
-    else {
-        throw "Type Error: Array Pop is applied to not Reference to Array";
-    }
+    throw "Type Error: Array Pop is applied to not Reference to Array";
 }
-void TypeOf_ArrayLen(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_ArrayLen(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     ArrayLen *array_len = dynamic_cast <ArrayLen*> (expr);
     Type *t_;
     TypeOf(array_len->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
@@ -758,24 +578,23 @@ void TypeOf_ArrayLen(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT
         if (ArrayType *array_type = dynamic_cast <ArrayType*> (ref_type->type_)) {
             delete t_;
             type = new IntType();
+            return;
         }
     }
-    else {
-        throw "Type Error: Array Len is applied to not Reference to Array";
-    }
+    throw "Type Error: Array Len is applied to not Reference to Array";
 }
 
-void TypeOf_ConstInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_ConstInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     type = new IntType();
 }
-void TypeOf_ToInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_ToInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     ToInt *to_int = dynamic_cast <ToInt*> (expr);
     Type *type_;
     TypeOf(to_int->expr_, type_, context_expr, context_local, context_type, constraint, var_num);
     constraint.push_back({type_, new RealType()});
     type = new IntType();
 }
-void TypeOf_AddInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_AddInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     AddInt *add_int = dynamic_cast <AddInt*> (expr);
     Type *type_;
     TypeOf(add_int->expr_1, type_, context_expr, context_local, context_type, constraint, var_num);
@@ -784,7 +603,7 @@ void TypeOf_AddInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &
     constraint.push_back({type_, new IntType()});
     type = new IntType();
 }
-void TypeOf_SubInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_SubInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     SubInt *sub_int = dynamic_cast <SubInt*> (expr);
     Type *type_;
     TypeOf(sub_int->expr_1, type_, context_expr, context_local, context_type, constraint, var_num);
@@ -793,7 +612,7 @@ void TypeOf_SubInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &
     constraint.push_back({type_, new IntType()});
     type = new IntType();
 }
-void TypeOf_MulInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_MulInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     MulInt *mul_int = dynamic_cast <MulInt*> (expr);
     Type *type_;
     TypeOf(mul_int->expr_1, type_, context_expr, context_local, context_type, constraint, var_num);
@@ -802,7 +621,7 @@ void TypeOf_MulInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &
     constraint.push_back({type_, new IntType()});
     type = new IntType();
 }
-void TypeOf_DivInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_DivInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     DivInt *div_int = dynamic_cast <DivInt*> (expr);
     Type *type_;
     TypeOf(div_int->expr_1, type_, context_expr, context_local, context_type, constraint, var_num);
@@ -811,7 +630,7 @@ void TypeOf_DivInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &
     constraint.push_back({type_, new IntType()});
     type = new IntType();
 }
-void TypeOf_EquInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_EquInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     EquInt *equ_int = dynamic_cast <EquInt*> (expr);
     Type *type_;
     TypeOf(equ_int->expr_1, type_, context_expr, context_local, context_type, constraint, var_num);
@@ -820,7 +639,7 @@ void TypeOf_EquInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &
     constraint.push_back({type_, new IntType()});
     type = new BoolType();
 }
-void TypeOf_LesInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_LesInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     LesInt *les_int = dynamic_cast <LesInt*> (expr);
     Type *type_;
     TypeOf(les_int->expr_1, type_, context_expr, context_local, context_type, constraint, var_num);
@@ -830,17 +649,17 @@ void TypeOf_LesInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &
     type = new BoolType();
 }
 
-void TypeOf_ConstReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_ConstReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     type = new RealType();
 }
-void TypeOf_ToReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_ToReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     ToReal *to_real = dynamic_cast <ToReal*> (expr);
     Type *type_;
     TypeOf(to_real->expr_, type_, context_expr, context_local, context_type, constraint, var_num);
     constraint.push_back({type_, new IntType()});
     type = new RealType();
 }
-void TypeOf_AddReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_AddReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     AddReal *add_real = dynamic_cast <AddReal*> (expr);
     Type *type_;
     TypeOf(add_real->expr_1, type_, context_expr, context_local, context_type, constraint, var_num);
@@ -849,7 +668,7 @@ void TypeOf_AddReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT 
     constraint.push_back({type_, new RealType()});
     type = new RealType();
 }
-void TypeOf_SubReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_SubReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     SubReal *sub_real = dynamic_cast <SubReal*> (expr);
     Type *type_;
     TypeOf(sub_real->expr_1, type_, context_expr, context_local, context_type, constraint, var_num);
@@ -858,7 +677,7 @@ void TypeOf_SubReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT 
     constraint.push_back({type_, new RealType()});
     type = new RealType();
 }
-void TypeOf_MulReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_MulReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     MulReal *mul_real = dynamic_cast <MulReal*> (expr);
     Type *type_;
     TypeOf(mul_real->expr_1, type_, context_expr, context_local, context_type, constraint, var_num);
@@ -867,7 +686,7 @@ void TypeOf_MulReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT 
     constraint.push_back({type_, new RealType()});
     type = new RealType();
 }
-void TypeOf_DivReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_DivReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     DivReal *div_real = dynamic_cast <DivReal*> (expr);
     Type *type_;
     TypeOf(div_real->expr_1, type_, context_expr, context_local, context_type, constraint, var_num);
@@ -876,7 +695,7 @@ void TypeOf_DivReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT 
     constraint.push_back({type_, new RealType()});
     type = new RealType();
 }
-void TypeOf_EquReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_EquReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     EquReal *equ_real = dynamic_cast <EquReal*> (expr);
     Type *type_;
     TypeOf(equ_real->expr_1, type_, context_expr, context_local, context_type, constraint, var_num);
@@ -885,7 +704,7 @@ void TypeOf_EquReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT 
     constraint.push_back({type_, new RealType()});
     type = new BoolType();
 }
-void TypeOf_LesReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_LesReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     LesReal *les_real = dynamic_cast <LesReal*> (expr);
     Type *type_;
     TypeOf(les_real->expr_1, type_, context_expr, context_local, context_type, constraint, var_num);
@@ -895,34 +714,34 @@ void TypeOf_LesReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT 
     type = new BoolType();
 }
 
-void TypeOf_ReadInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_ReadInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     type = new IntType();
 }
-void TypeOf_ReadReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_ReadReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     type = new RealType();
 }
-void TypeOf_WriteInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_WriteInt(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     WriteInt *write_int = dynamic_cast <WriteInt*> (expr);
     Type *t_;
     TypeOf(write_int->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
     constraint.push_back({t_, new IntType()});
 }
-void TypeOf_WriteReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_WriteReal(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     WriteReal *write_real = dynamic_cast <WriteReal*> (expr);
     Type *t_;
     TypeOf(write_real->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
     constraint.push_back({t_, new RealType()});
 }
 
-void TypeOf(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     if (dynamic_cast <Definition*> (expr)) {
         TypeOf_Definition(expr, context_expr, context_local, context_type, constraint, var_num); return;
     }
-    if (dynamic_cast <MoveAssignment*> (expr)) {
-        TypeOf_MoveAssignment(expr, context_expr, context_local, context_type, constraint, var_num); return;
+    if (dynamic_cast <TypeDefinition*> (expr)) {
+        TypeOf_TypeDefinition(expr, context_expr, context_local, context_type, constraint, var_num); return;
     }
-    if (dynamic_cast <CopyAssignment*> (expr)) {
-        TypeOf_CopyAssignment(expr, context_expr, context_local, context_type, constraint, var_num); return;
+    if (dynamic_cast <Assignment*> (expr)) {
+        TypeOf_Assignment(expr, context_expr, context_local, context_type, constraint, var_num); return;
     }
     if (dynamic_cast <IfStatement*> (expr)) {
         TypeOf_IfStatement(expr, context_expr, context_local, context_type, constraint, var_num); return;
@@ -947,23 +766,27 @@ void TypeOf(Statement *expr, ContextIT &context_expr, ContextIT &context_local, 
     }
 }
 
-void TypeOf_Definition(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Definition(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Definition *definition = dynamic_cast <Definition*> (expr);
     Type *t_;
     TypeOf(definition->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
     context_local.push_back({definition->ident_, t_});
     if (!dynamic_cast <AutoType*> (definition->type_)) {
-        constraint.push_back({t_, definition->type_});
+        TypeToNameless(definition->type_, context_type);
+        constraint.push_back({t_->clone(), definition->type_->clone()});
     }
 }
-
-void TypeOf_MoveAssignment(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
-    MoveAssignment *move_assignment = dynamic_cast <MoveAssignment*> (expr);
+void TypeOf_TypeDefinition(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
+    TypeDefinition *type_definition = dynamic_cast <TypeDefinition*> (expr);
+    context_type.push_back({type_definition->ident_, type_definition->type_->clone()});
+}
+void TypeOf_Assignment(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
+    Assignment *assignment = dynamic_cast <Assignment*> (expr);
     Type *t_1;
-    TypeOf(move_assignment->expr_1, t_1, context_expr, context_local, context_type, constraint, var_num);
+    TypeOf(assignment->expr_1, t_1, context_expr, context_local, context_type, constraint, var_num);
     if (RefType *ref_type = dynamic_cast <RefType*> (t_1)) {
         Type *t_2;
-        TypeOf(move_assignment->expr_2, t_2, context_expr, context_local, context_type, constraint, var_num);
+        TypeOf(assignment->expr_2, t_2, context_expr, context_local, context_type, constraint, var_num);
         constraint.push_back({ref_type->type_->clone(), t_2});
         delete t_1;
     }
@@ -971,22 +794,7 @@ void TypeOf_MoveAssignment(Statement *expr, ContextIT &context_expr, ContextIT &
         throw "Type Error: Assignment applied to not Reference";
     }
 }
-
-void TypeOf_CopyAssignment(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
-    CopyAssignment *copy_assignment = dynamic_cast <CopyAssignment*> (expr);
-    Type *t_1;
-    TypeOf(copy_assignment->expr_1, t_1, context_expr, context_local, context_type, constraint, var_num);
-    if (RefType *ref_type = dynamic_cast <RefType*> (t_1)) {
-        Type *t_2;
-        TypeOf(copy_assignment->expr_2, t_2, context_expr, context_local, context_type, constraint, var_num);
-        constraint.push_back({ref_type->type_->clone(), t_2});
-        delete t_1;
-    }
-    else {
-        throw "Type Error: Assignment applied to not Reference";
-    }
-}
-void TypeOf_IfStatement(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_IfStatement(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     IfStatement *if_statement = dynamic_cast <IfStatement*> (expr);
     
     Type *t_;
@@ -995,7 +803,7 @@ void TypeOf_IfStatement(Statement *expr, ContextIT &context_expr, ContextIT &con
     
     TypeOf(if_statement->liststatement_, context_expr, context_local, context_type, constraint, var_num);
 }
-void TypeOf_IfElseStatement(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_IfElseStatement(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     IfElseStatement *if_else_statement = dynamic_cast <IfElseStatement*> (expr);
     
     Type *t_;
@@ -1005,26 +813,31 @@ void TypeOf_IfElseStatement(Statement *expr, ContextIT &context_expr, ContextIT 
     TypeOf(if_else_statement->liststatement_1, context_expr, context_local, context_type, constraint, var_num);
     TypeOf(if_else_statement->liststatement_2, context_expr, context_local, context_type, constraint, var_num);
 }
-void TypeOf_Loop(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Loop(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Loop *loop = dynamic_cast <Loop*> (expr);
     TypeOf(loop->liststatement_, context_expr, context_local, context_type, constraint, var_num);
 }
-void TypeOf_Break(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) { }
-void TypeOf_Continue(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) { }
-void TypeOf_Return(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) { }
-void TypeOf_Eval(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf_Break(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) { }
+void TypeOf_Continue(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) { }
+void TypeOf_Return(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) { }
+void TypeOf_Eval(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Eval *eval = dynamic_cast <Eval*> (expr);
     Type *t_;
     TypeOf(eval->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
 }
 
-void TypeOf(ListStatement *list, ContextIT &context_expr, ContextIT &context_local, ContextI &context_type, Constraint &constraint, int &var_num) {
+void TypeOf(ListStatement *list, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     size_t context_size = context_local.size();
+    size_t context_type_size = context_type.size();
     for (ListStatement::iterator i = list->begin(); i != list->end(); i++) {
         TypeOf(*i, context_expr, context_local, context_type, constraint, var_num);
     }
     while (context_local.size() > context_size) {
         delete context_local.back().second;
+        context_local.pop_back();
+    }
+    while (context_type.size() > context_type_size) {
+        delete context_type.back().second;
         context_local.pop_back();
     }
 }

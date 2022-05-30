@@ -1,0 +1,118 @@
+comment             "//" ;
+comment             "/*" "*/" ;
+
+ProgramRoot.        Program ::= [Statement] ;
+
+separator           Expr    "," ;
+
+ConstTrue.          Expr8   ::= "true" ;
+ConstFalse.         Expr8   ::= "false" ;
+ConstZero.          Expr8   ::= "$0" ;
+If.                 Expr3   ::= "if" Expr "then" Expr "else" Expr ;
+Succ.               Expr3   ::= "succ" Expr3 ;
+Pred.               Expr3   ::= "pred" Expr3 ;
+IsZero.             Expr3   ::= "iszero" Expr3 ;
+Var.                Expr8   ::= Ident ;
+Abstraction.        Expr1   ::= "fun" "(" Type Ident ")" "{" [Statement] "ret" Expr "}" ;
+MultiAbstraction.   Expr1   ::= "fun" "(" [AbstractionField_] ")" "{" [Statement] "ret" Expr "}" ;
+Application.        Expr2   ::= Expr2 Expr3 ;
+TypeAbstraction.    Expr1   ::= "uni" Ident "~>" Expr1 ;
+TypeApplication.    Expr2   ::= Expr2 "[" Type "]" ;
+Fix.                Expr1   ::= "fix" Expr1 ;
+Where.              Expr    ::= Expr1 "where" Type Ident "=" Expr ;
+MultiWhere.         Expr    ::= Expr "where" "{" [WhereField_] "}" ;
+Reference.          Expr7   ::= "ref" Expr7 ;
+Dereference.        Expr7   ::= "*" Expr7 ;
+Tuple.              Expr8   ::= "<" [Expr] ">" ;
+TupleGet.           Expr8   ::= Expr8 "." Integer ;
+Record.             Expr8   ::= "{" [RecordField_] "}" ;
+RecordGet.          Expr8   ::= Expr8 "." Ident ;
+Variant.            Expr8   ::= "<" Ident "=" Expr ">" "as" Type ;
+VariantCase.        Expr8   ::= "case" Expr "of" [VariantField_] ;
+Array.              Expr8   ::= "[" [Expr] "]" ;
+ArrayGet.           Expr8   ::= "get" "(" Expr "," Expr ")" ;
+ArrayPush.          Expr8   ::= "push" "(" Expr "," Expr ")" ;
+ArrayPop.           Expr8   ::= "pop" "(" Expr ")" ;
+ArrayLen.           Expr8   ::= "len" "(" Expr ")" ;
+
+ConstInt.           Expr8   ::= Integer ;
+ToInt.              Expr3   ::= "toInt" "(" Expr ")" ;
+AddInt.             Expr5   ::= Expr5 "i+" Expr6 ;
+SubInt.             Expr5   ::= Expr5 "i-" Expr6 ;
+MulInt.             Expr6   ::= Expr6 "i*" Expr7 ;
+DivInt.             Expr6   ::= Expr6 "i/" Expr7 ;
+EquInt.             Expr4   ::= Expr4 "i=" Expr5 ;
+LesInt.             Expr4   ::= Expr4 "i<" Expr5 ;
+
+ConstReal.          Expr8   ::= Double ;
+ToReal.             Expr3   ::= "toReal" "(" Expr ")" ;
+AddReal.            Expr5   ::= Expr5 "r+" Expr6 ;
+SubReal.            Expr5   ::= Expr5 "r-" Expr6 ;
+MulReal.            Expr6   ::= Expr6 "r*" Expr7 ;
+DivReal.            Expr6   ::= Expr6 "r/" Expr7 ;
+EquReal.            Expr4   ::= Expr4 "r=" Expr5 ;
+LesReal.            Expr4   ::= Expr4 "r<" Expr5 ;
+
+ReadInt.            Expr1   ::= "readInt" ;
+ReadReal.           Expr1   ::= "readReal" ;
+WriteInt.           Expr1   ::= "writeInt" Expr1 ;
+WriteReal.          Expr1   ::= "writeReal" Expr1 ;
+
+_.                  Expr    ::= Expr1 ;
+_.                  Expr1   ::= Expr2 ;
+_.                  Expr2   ::= Expr3 ;
+_.                  Expr3   ::= Expr4 ;
+_.                  Expr4   ::= Expr5 ;
+_.                  Expr5   ::= Expr6 ;
+_.                  Expr6   ::= Expr7 ;
+_.                  Expr7   ::= Expr8 ;
+_.                  Expr8   ::= "(" Expr ")" ;
+
+separator           AbstractionField_   "," ;
+AbstractionField.   AbstractionField_   ::= Type Ident ;
+
+separator           WhereField_ "," ;
+WhereField.         WhereField_ ::= Type Ident "=" Expr ;
+
+separator           RecordField_    "," ;
+RecordField.        RecordField_    ::= Ident "=" Expr ;
+
+separator           VariantField_   "|" ;
+VariantField.       VariantField_   ::= "<" Ident "=" Ident ">" "=>" Expr ;
+
+Import.             Statement   ::= "import" String ;
+Definition.         Statement   ::= "def" Type Ident "=" Expr ;
+TypeDefinition.     Statement   ::= "typedef" Ident "=" Type ;
+Assignment.         Statement   ::= Expr "<-" Expr ;
+IfStatement.        Statement   ::= "if" "(" Expr ")" "{" [Statement] "}" ;
+IfElseStatement.    Statement   ::= "if" "(" Expr ")" "{" [Statement] "}" "else" "{" [Statement] "}" ;
+Loop.               Statement   ::= "loop" "{" [Statement] "}" ;
+Break.              Statement   ::= "break" ;
+Continue.           Statement   ::= "continue" ;
+Return.             Statement   ::= "return" ;
+Eval.               Statement   ::= "eval" Expr ;
+separator           Statement   ";" ;
+
+separator           Type    "," ;
+
+AutoType.           Type    ::= "_" ;
+BoolType.           Type    ::= "Bool" ;
+NatType.            Type    ::= "Nat" ;
+RefType.            Type    ::= "Ref" Type ;
+VarType.            Type    ::= Ident ;
+UniType.            Type    ::= "%" Ident "." Type ;
+FunType.            Type    ::= Type "->" Type ;
+TupleType.          Type    ::= "<" [Type] ">" ;
+RecordType.         Type    ::= "{" [RecordTypeField_] "}" ;
+VariantType.        Type    ::= "<" [VariantTypeField_] ">" ;
+ArrayType.          Type    ::= "[" Type "]" ;
+IntType.            Type    ::= "Int" ;
+RealType.           Type    ::= "Real" ;
+_.                  Type    ::= "(" Type ")" ;
+
+separator           RecordTypeField_    "," ;
+RecordTypeField.    RecordTypeField_    ::= Ident ":" Type ;
+
+separator           VariantTypeField_   "," ;
+VariantTypeField.   VariantTypeField_   ::= Ident ":" Type ;
+

@@ -4,25 +4,10 @@
 #include <iterator>
 #include <algorithm>
 #include <map>
-#include "Syntax/Normal/Parser.H"
-#include "Syntax/Normal/Printer.H"
-#include "Syntax/Normal/Absyn.H"
-#include "Syntax/Normal/ParserError.H"
-
-void Print(Type *&type) {
-    PrintAbsyn *p = new PrintAbsyn();
-    printf("%s\n\n", p->print(type));
-}
-
-void Print(Expr *&expr) {
-    PrintAbsyn *p = new PrintAbsyn();
-    printf("%s\n\n", p->print(expr));
-}
-
-void Print(Statement *&expr) {
-    PrintAbsyn *p = new PrintAbsyn();
-    printf("%s\n\n", p->print(expr));
-}
+#include "Syntax/Parser.H"
+#include "Syntax/Printer.H"
+#include "Syntax/Absyn.H"
+#include "Syntax/ParserError.H"
 
 bool Debug = false;
 
@@ -32,11 +17,12 @@ ProgramRoot* ParseFile(std::string);
 #include "assemble.h"
 #include "to_nameless.h"
 #include "shift.h"
-#include "nameless_substitution.h"
+#include "substitution.h"
 #include "type_to_nameless.h"
 #include "type_shift.h"
 #include "type_free.h"
 #include "type_substitution.h"
+#include "type.h"
 #include "typeof.h"
 #include "evaluate.h"
 
@@ -50,12 +36,13 @@ ProgramRoot* ParseFile(std::string filename) {
     try {
         program = pProgram(input);
     }
-    
     catch(parse_error &e) {
-        std::cerr << "Parse error on line " << e.getLine() << "\n";
+        std::string error = "Parse error on line " + e.getLine();
+        throw error.c_str();
     }
+
     if (!program)
-        return nullptr;
+        throw "";
     ProgramRoot *program_root = dynamic_cast <ProgramRoot*> (program);
     fclose(input);
     return program_root;
@@ -77,9 +64,9 @@ void ProcessProgram(std::string filename) {
             printf("%s\n\n", p->print(program_root));
         }
     }
-    
+
     {
-        std::vector <Ident> context, context_local;
+        ContextI context, context_local;
         ToNameless_ProgramRoot(program_root, context, context_local);
         if (Debug) {
             std::cout << "Nameless" << std::endl;
@@ -88,9 +75,8 @@ void ProcessProgram(std::string filename) {
     }
     
     {
-        std::vector < std::pair <std::string, Type*> > context_expr, context_local;
-        std::vector <Ident> context_type;
-        std::vector < std::pair <Type*, Type*> > constraint;
+        ContextIT context_expr, context_local, context_type;
+        Constraint constraint;
 
         int var_num = 0;
         TypeOf_ProgramRoot(program_root, context_expr, context_local, context_type, constraint, var_num);
@@ -113,6 +99,11 @@ void ProcessProgram(std::string filename) {
                 printf("%s =\n", i.first.c_str());
                 printf("%s\n\n\n\n", p->print(i.second));
             }
+        }
+        
+        if (Debug) {
+            std::cout << "Typechecked" << std::endl;
+            printf("%s\n\n", p->print(program_root));
         }
     }
 

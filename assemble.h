@@ -57,8 +57,8 @@ void Assemble_WriteReal         (Expr*&);
 void Assemble                   (Statement*&);
 void Assemble_Import            (Statement*&);
 void Assemble_Definition        (Statement*&);
-void Assemble_MoveAssignment    (Statement*&);
-void Assemble_CopyAssignment    (Statement*&);
+void Assemble_TypeDefinition    (Statement*&);
+void Assemble_Assignment        (Statement*&);
 void Assemble_IfStatement       (Statement*&);
 void Assemble_IfElseStatement   (Statement*&);
 void Assemble_Loop              (Statement*&);
@@ -68,8 +68,6 @@ void Assemble_Return            (Statement*&);
 void Assemble_Eval              (Statement*&);
 
 void Assemble(ListStatement*&);
-
-std::map <std::string, int> file_status;
 
 void Assemble(Expr *&expr) {
     if (dynamic_cast <ConstTrue*> (expr)) {
@@ -223,6 +221,8 @@ void Assemble(Expr *&expr) {
         Assemble_WriteReal(expr); return;
     }
 }
+
+std::map <std::string, int> file_status;
 
 void Assemble(ProgramRoot *&program_root) {
     Assemble(program_root->liststatement_);
@@ -470,11 +470,11 @@ void Assemble(Statement *&expr) {
     if (dynamic_cast <Definition*> (expr)) {
         Assemble_Definition(expr); return;
     }
-    if (dynamic_cast <MoveAssignment*> (expr)) {
-        Assemble_MoveAssignment(expr); return;
+    if (dynamic_cast <TypeDefinition*> (expr)) {
+        Assemble_TypeDefinition(expr); return;
     }
-    if (dynamic_cast <CopyAssignment*> (expr)) {
-        Assemble_CopyAssignment(expr); return;
+    if (dynamic_cast <Assignment*> (expr)) {
+        Assemble_Assignment(expr); return;
     }
     if (dynamic_cast <IfStatement*> (expr)) {
         Assemble_IfStatement(expr); return;
@@ -504,15 +504,11 @@ void Assemble_Definition(Statement *&expr) {
     Definition *definition = dynamic_cast <Definition*> (expr);
     Assemble(definition->expr_);
 }
-void Assemble_MoveAssignment(Statement *&expr) {
-    MoveAssignment *move_assignment = dynamic_cast <MoveAssignment*> (expr);
-    Assemble(move_assignment->expr_1);
-    Assemble(move_assignment->expr_2);
-}
-void Assemble_CopyAssignment(Statement *&expr) {
-    CopyAssignment *copy_assignment = dynamic_cast <CopyAssignment*> (expr);
-    Assemble(copy_assignment->expr_1);
-    Assemble(copy_assignment->expr_2);
+void Assemble_TypeDefinition(Statement *&expr) { }
+void Assemble_Assignment(Statement *&expr) {
+    Assignment *assignment = dynamic_cast <Assignment*> (expr);
+    Assemble(assignment->expr_1);
+    Assemble(assignment->expr_2);
 }
 void Assemble_IfStatement(Statement *&expr) {
     IfStatement *if_statement = dynamic_cast <IfStatement*> (expr);
@@ -540,12 +536,12 @@ void Assemble_Eval(Statement *&expr) {
 void Assemble(ListStatement *&list) {
     for (size_t i = 0; i < list->size(); i++) {
         if (Import *import = dynamic_cast <Import*> ((*list)[i])) {
-            if (file_status[import->ident_]) {
-                throw "Assemble Error: import cyclic dependency detected";
+            if (file_status[import->string_]) {
+                throw "Assemble Error: Import cyclic dependency detected";
             }
-            file_status[import->ident_]++;
-            ProgramRoot *program_root = ParseFile(import->ident_);
-            file_status[import->ident_]--;
+            file_status[import->string_]++;
+            ProgramRoot *program_root = ParseFile(import->string_);
+            file_status[import->string_]--;
             list->erase(std::next(list->begin(), i));
             list->insert(std::next(list->begin(), i), program_root->liststatement_->begin(), program_root->liststatement_->end());
         }
