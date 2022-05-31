@@ -1,5 +1,5 @@
 # CLInterpreter
-## [Documentation](documentation.html)
+## [Documentation](https://htmlpreview.github.io/?https://github.com/ParfenovIgor/CL/blob/main/documentation.html )
 ### By Igor Parfenov
 
 An interpreter for CL language working on Linux OS only. Built and used on Ubuntu 21.10 (Impish Indri).
