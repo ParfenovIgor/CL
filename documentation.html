@@ -118,6 +118,7 @@
                                     <li><a href="#Variant Expression">Variant Expression</a></li>
                                     <li><a href="#VariantCase Expression">VariantCase Expression</a></li>
                                     <li><a href="#Array Expression">Array Expression</a></li>
+                                    <li><a href="#ArrayEmpty Expression">ArrayEmpty Expression</a></li>
                                     <li><a href="#ArrayGet Expression">ArrayGet Expression</a></li>
                                     <li><a href="#ArrayPush Expression">ArrayPush Expression</a></li>
                                     <li><a href="#ArrayPop Expression">ArrayPop Expression</a></li>
@@ -993,7 +994,7 @@
 
                         <h4 id="Array Expression">2.3.25. Array Expression</h3>
                         <p>
-                            This is Term. It evaluates its Expressions, which have to have same Type.<br>
+                            This is Term. It evaluates its Expressions, which have to have same Type. The Array has not to be empty.<br>
                             Form: [<b>[expr]</b>]<br>
                             Typing Rules: [<b>[e_i]</b>] : [<b>t</b>] <= <b>e_i</b> : <b>t</b><br>
                             Evaluation Rules:<br>
@@ -1001,7 +1002,17 @@
                         </p>
                         <a href="#Navigation">Navigation</a>
 
-                        <h4 id="ArrayGet Expression">2.3.26. ArrayGet Expression</h3>
+                        <h4 id="ArrayEmpty Expression">2.3.26. ArrayEmpty Expression</h3>
+                        <p>
+                            This is Term. It becomes empty Array, and is used to be able to construct Type of empty Array through annotation.<br>
+                            Form: \0 <b>type</b><br>
+                            Typing Rules: \0 <b>t</b> : t<br>
+                            Evaluation Rules:<br>
+                            \0 <b>t<b> => []
+                        </p>
+                        <a href="#Navigation">Navigation</a>
+
+                        <h4 id="ArrayGet Expression">2.3.27. ArrayGet Expression</h3>
                         <p>
                             This is Term. It evaluates its left Expression, which has to have Ref to Array Type, then evaluates right Expression, which has to have Int Type, and then becomes a pointer to appropriate location in storage. The Array has 0-indexation.<br>
                             Form: get (<b>expr</b>, <b>expr</b>)<br>
@@ -1013,7 +1024,7 @@
                         </p>
                         <a href="#Navigation">Navigation</a>
 
-                        <h4 id="ArrayPush Expression">2.3.27. ArrayPush Expression</h3>
+                        <h4 id="ArrayPush Expression">2.3.28. ArrayPush Expression</h3>
                         <p>
                             This is Term. It evaluates its left Expression, which has to have Ref to Array Type, then evaluates right Expression, which has to have Type of array argument, then pushes its right Expression into back of array, and then becomes ConstTrue.<br>
                             Form: push (<b>expr</b>, <b>expr</b>)<br>
@@ -1025,7 +1036,7 @@
                         </p>
                         <a href="#Navigation">Navigation</a>
 
-                        <h4 id="ArrayPop Expression">2.3.28. ArrayPop Expression</h3>
+                        <h4 id="ArrayPop Expression">2.3.29. ArrayPop Expression</h3>
                         <p>
                             This is Term. It evaluates its Expression, which has to have Ref to Array Type, then pops last element of array, and then becomes ConstTrue.<br>
                             Form: pop (<b>expr</b>)<br>
@@ -1036,7 +1047,7 @@
                         </p>
                         <a href="#Navigation">Navigation</a>
 
-                        <h4 id="ArrayLen Expression">2.3.29. ArrayLen Expression</h3>
+                        <h4 id="ArrayLen Expression">2.3.30. ArrayLen Expression</h3>
                         <p>
                             This is Term. It evaluates its Expression, which has to have Ref to Array Type, then becomes ConstInt, equal to the length of the array.<br>
                             Form: len (<b>expr</b>)<br>
@@ -1047,7 +1058,7 @@
                         </p>
                         <a href="#Navigation">Navigation</a>
 
-                        <h4 id="ConstInt Expression">2.3.30. ConstInt Expression</h3>
+                        <h4 id="ConstInt Expression">2.3.31. ConstInt Expression</h3>
                         <p>
                             This is Value. It is 32-bit signed integer.<br>
                             Form: <b>integer</b><br>
@@ -1055,7 +1066,7 @@
                         </p>
                         <a href="#Navigation">Navigation</a>
 
-                        <h4 id="ToInt Expression">2.3.31. ToInt Expression</h3>
+                        <h4 id="ToInt Expression">2.3.32. ToInt Expression</h3>
                         <p>
                             This is Term. It evaluated its Expression, which has to have Real Type, then becomes ConstInt, equal to value of Real casted to int.<br>
                             Form: toInt (<b>expr</b>)<br>
@@ -1066,7 +1077,7 @@
                         </p>
                         <a href="#Navigation">Navigation</a>
 
-                        <h4 id="ConstReal Expression">2.3.32. ConstReal Expression</h3>
+                        <h4 id="ConstReal Expression">2.3.33. ConstReal Expression</h3>
                         <p>
                             This is Value. It is 64-bit floating-point number.<br>
                             Form: <b>double</b><br>
@@ -1074,7 +1085,7 @@
                         </p>
                         <a href="#Navigation">Navigation</a>
 
-                        <h4 id="ToReal Expression">2.3.33. ToReal Expression</h3>
+                        <h4 id="ToReal Expression">2.3.34. ToReal Expression</h3>
                         <p>
                             This is Term. It evaluated its Expression, which has to have Int Type, then becomes ConstReal, equal to value of Int casted to double.<br>
                             Form: toReal (<b>expr</b>)<br>
@@ -1085,7 +1096,7 @@
                         </p>
                         <a href="#Navigation">Navigation</a>
 
-                        <h4 id="Binary Operations">2.3.34. Binary Operations</h3>
+                        <h4 id="Binary Operations">2.3.35. Binary Operations</h3>
                         <p>
                             These are Terms with same form.
                             <table border="1">
@@ -1219,7 +1230,7 @@
                         </p>
                         <a href="#Navigation">Navigation</a>
 
-                        <h4 id="ReadInt Expression">2.3.35. ReadInt Expression</h3>
+                        <h4 id="ReadInt Expression">2.3.36. ReadInt Expression</h3>
                         <p>
                             This is Term. It reads 32-bit unsigned integer from <b>stdin</b>, and becomes ConstInt, equal to value read.<br>
                             Form: readInt<br>
@@ -1229,7 +1240,7 @@
                         </p>
                         <a href="#Navigation">Navigation</a>
 
-                        <h4 id="ReadReal Expression">2.3.36. ReadReal Expression</h3>
+                        <h4 id="ReadReal Expression">2.3.37. ReadReal Expression</h3>
                         <p>
                             This is Term. It reads 64-bit floating-point number from <b>stdin</b>, and becomes ConstReal, equal to value read.<br>
                             Form: readReal<br>
@@ -1239,7 +1250,7 @@
                         </p>
                         <a href="#Navigation">Navigation</a>
 
-                        <h4 id="WriteInt Expression">2.3.37. WriteInt Expression</h3>
+                        <h4 id="WriteInt Expression">2.3.38. WriteInt Expression</h3>
                         <p>
                             This is Term. It evaluates its Expression, which has to have Int Type, writes 32-bit unsigned integer equal to value of ConstInt to <b>stdout</b>, and then becomes ConstTrue.<br>
                             Form: writeInt <b>expr</b><br>
@@ -1250,7 +1261,7 @@
                         </p>
                         <a href="#Navigation">Navigation</a>
 
-                        <h4 id="WriteReal Expression">2.3.38. WriteReal Expression</h3>
+                        <h4 id="WriteReal Expression">2.3.39. WriteReal Expression</h3>
                         <p>
                             This is Term. It evaluates its Expression, which has to have Real Type, writes 64-bit floating-point number equal to value of ConstReal to <b>stdout</b>, and then becomes ConstTrue.<br>
                             Form: writeReal <b>expr</b><br>

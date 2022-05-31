@@ -24,6 +24,7 @@ void TypeOf_RecordGet       (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&,
 void TypeOf_Variant         (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
 void TypeOf_VariantCase     (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
 void TypeOf_Array           (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
+void TypeOf_ArrayEmpty      (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
 void TypeOf_ArrayGet        (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
 void TypeOf_ArrayPush       (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
 void TypeOf_ArrayPop        (Expr*, Type *&, ContextIT&, ContextIT&, ContextIT&, Constraint&, int&);
@@ -135,6 +136,9 @@ void TypeOf(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context
     }
     if (dynamic_cast <Array*> (expr)) {
         TypeOf_Array(expr, type, context_expr, context_local, context_type, constraint, var_num); return;
+    }
+    if (dynamic_cast <ArrayEmpty*> (expr)) {
+        TypeOf_ArrayEmpty(expr, type, context_expr, context_local, context_type, constraint, var_num); return;
     }
     if (dynamic_cast <ArrayGet*> (expr)) {
         TypeOf_ArrayGet(expr, type, context_expr, context_local, context_type, constraint, var_num); return;
@@ -510,7 +514,7 @@ void TypeOf_Array(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &c
     Type *t_1;
     bool first = true;
     if (array->listexpr_->empty()) {
-        throw "Type Error: const Array could not be empty";
+        throw "Type Error: empty Array has to have Type annotation";
     }
     for (ListExpr::iterator i = array->listexpr_->begin(); i != array->listexpr_->end(); i++) {
         if (first) {
@@ -524,6 +528,11 @@ void TypeOf_Array(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &c
         }
     }
     type = new ArrayType(t_1);
+}
+void TypeOf_ArrayEmpty(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
+    ArrayEmpty *array_empty = dynamic_cast <ArrayEmpty*> (expr);
+    TypeToNameless(array_empty->type_, context_type);
+    type = array_empty->type_->clone();
 }
 void TypeOf_ArrayGet(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     ArrayGet *array_get = dynamic_cast <ArrayGet*> (expr);
@@ -770,10 +779,13 @@ void TypeOf_Definition(Statement *expr, ContextIT &context_expr, ContextIT &cont
     Definition *definition = dynamic_cast <Definition*> (expr);
     Type *t_;
     TypeOf(definition->expr_, t_, context_expr, context_local, context_type, constraint, var_num);
-    context_local.push_back({definition->ident_, t_});
-    if (!dynamic_cast <AutoType*> (definition->type_)) {
+    if (dynamic_cast <AutoType*> (definition->type_)) {
+        context_local.push_back({definition->ident_, t_});
+    }
+    else {
         TypeToNameless(definition->type_, context_type);
-        constraint.push_back({t_->clone(), definition->type_->clone()});
+        constraint.push_back({t_, definition->type_->clone()});
+        context_local.push_back({definition->ident_, definition->type_->clone()});
     }
 }
 void TypeOf_TypeDefinition(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
@@ -782,11 +794,11 @@ void TypeOf_TypeDefinition(Statement *expr, ContextIT &context_expr, ContextIT &
 }
 void TypeOf_Assignment(Statement *expr, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     Assignment *assignment = dynamic_cast <Assignment*> (expr);
-    Type *t_1;
+    Type *t_1, *t_2;
     TypeOf(assignment->expr_1, t_1, context_expr, context_local, context_type, constraint, var_num);
+    TypeOf(assignment->expr_2, t_2, context_expr, context_local, context_type, constraint, var_num);
+
     if (RefType *ref_type = dynamic_cast <RefType*> (t_1)) {
-        Type *t_2;
-        TypeOf(assignment->expr_2, t_2, context_expr, context_local, context_type, constraint, var_num);
         constraint.push_back({ref_type->type_->clone(), t_2});
         delete t_1;
     }

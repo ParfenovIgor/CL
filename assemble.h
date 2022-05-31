@@ -26,6 +26,7 @@ void Assemble_RecordGet         (Expr*&);
 void Assemble_Variant           (Expr*&);
 void Assemble_VariantCase       (Expr*&);
 void Assemble_Array             (Expr*&);
+void Assemble_ArrayEmpty        (Expr*&);
 void Assemble_ArrayGet          (Expr*&);
 void Assemble_ArrayPush         (Expr*&);
 void Assemble_ArrayPop          (Expr*&);
@@ -144,6 +145,9 @@ void Assemble(Expr *&expr) {
     }
     if (dynamic_cast <Array*> (expr)) {
         Assemble_Array(expr); return;
+    }
+    if (dynamic_cast <ArrayEmpty*> (expr)) {
+        Assemble_ArrayEmpty(expr); return;
     }
     if (dynamic_cast <ArrayGet*> (expr)) {
         Assemble_ArrayGet(expr); return;
@@ -361,6 +365,7 @@ void Assemble_Array(Expr *&expr) {
         Assemble(*i);
     }
 }
+void Assemble_ArrayEmpty(Expr *&expr) { }
 void Assemble_ArrayGet(Expr *&expr) {
     ArrayGet *array_get = dynamic_cast <ArrayGet*> (expr);
     Assemble(array_get->expr_1);

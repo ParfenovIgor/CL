@@ -51,6 +51,7 @@ class PrintAbsyn : public Visitor
   void visitVariant(Variant *p);
   void visitVariantCase(VariantCase *p);
   void visitArray(Array *p);
+  void visitArrayEmpty(ArrayEmpty *p);
   void visitArrayGet(ArrayGet *p);
   void visitArrayPush(ArrayPush *p);
   void visitArrayPop(ArrayPop *p);
@@ -227,6 +228,7 @@ class ShowAbsyn : public Visitor
   void visitVariant(Variant *p);
   void visitVariantCase(VariantCase *p);
   void visitArray(Array *p);
+  void visitArrayEmpty(ArrayEmpty *p);
   void visitArrayGet(ArrayGet *p);
   void visitArrayPush(ArrayPush *p);
   void visitArrayPop(ArrayPop *p);

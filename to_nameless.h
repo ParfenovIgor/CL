@@ -24,6 +24,7 @@ void ToNameless_RecordGet       (Expr*, ContextI&, ContextI&);
 void ToNameless_Variant         (Expr*, ContextI&, ContextI&);
 void ToNameless_VariantCase     (Expr*, ContextI&, ContextI&);
 void ToNameless_Array           (Expr*, ContextI&, ContextI&);
+void ToNameless_ArrayEmpty      (Expr*, ContextI&, ContextI&);
 void ToNameless_ArrayGet        (Expr*, ContextI&, ContextI&);
 void ToNameless_ArrayPush       (Expr*, ContextI&, ContextI&);
 void ToNameless_ArrayPop        (Expr*, ContextI&, ContextI&);
@@ -135,6 +136,9 @@ void ToNameless(Expr *expr, ContextI &context, ContextI &context_local) {
     }
     if (dynamic_cast <Array*> (expr)) {
         ToNameless_Array(expr, context, context_local); return;
+    }
+    if (dynamic_cast <ArrayEmpty*> (expr)) {
+        ToNameless_ArrayEmpty(expr, context, context_local); return;
     }
     if (dynamic_cast <ArrayGet*> (expr)) {
         ToNameless_ArrayGet(expr, context, context_local); return;
@@ -334,6 +338,7 @@ void ToNameless_Array(Expr *expr, ContextI &context, ContextI &context_local) {
         ToNameless(*i, context, context_local);
     }
 }
+void ToNameless_ArrayEmpty(Expr *expr, ContextI &context, ContextI &context_local) { }
 void ToNameless_ArrayGet(Expr *expr, ContextI &context, ContextI &context_local) {
     ArrayGet *array_get = dynamic_cast <ArrayGet*> (expr);
     ToNameless(array_get->expr_1, context, context_local);

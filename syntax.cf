@@ -30,6 +30,7 @@ RecordGet.          Expr8   ::= Expr8 "." Ident ;
 Variant.            Expr8   ::= "<" Ident "=" Expr ">" "as" Type ;
 VariantCase.        Expr8   ::= "case" Expr "of" [VariantField_] ;
 Array.              Expr8   ::= "[" [Expr] "]" ;
+ArrayEmpty.         Expr8   ::= "\\0" Type ;
 ArrayGet.           Expr8   ::= "get" "(" Expr "," Expr ")" ;
 ArrayPush.          Expr8   ::= "push" "(" Expr "," Expr ")" ;
 ArrayPop.           Expr8   ::= "pop" "(" Expr ")" ;

@@ -23,6 +23,7 @@ void Substitute_RecordGet       (Expr*&, Ident&, Expr*);
 void Substitute_Variant         (Expr*&, Ident&, Expr*);
 void Substitute_VariantCase     (Expr*&, Ident&, Expr*);
 void Substitute_Array           (Expr*&, Ident&, Expr*);
+void Substitute_ArrayEmpty      (Expr*&, Ident&, Expr*);
 void Substitute_ArrayGet        (Expr*&, Ident&, Expr*);
 void Substitute_ArrayPush       (Expr*&, Ident&, Expr*);
 void Substitute_ArrayPop        (Expr*&, Ident&, Expr*);
@@ -134,6 +135,9 @@ void Substitute(Expr *&expr, Ident &ident, Expr *value) {
     }
     if (dynamic_cast <Array*> (expr)) {
         Substitute_Array(expr, ident, value); return;
+    }
+    if (dynamic_cast <ArrayEmpty*> (expr)) {
+        Substitute_ArrayEmpty(expr, ident, value); return;
     }
     if (dynamic_cast <ArrayGet*> (expr)) {
         Substitute_ArrayGet(expr, ident, value); return;
@@ -329,6 +333,7 @@ void Substitute_Array(Expr *&expr, Ident &ident, Expr *value) {
         Substitute(*i, ident, value);
     }
 }
+void Substitute_ArrayEmpty(Expr *&expr, Ident &ident, Expr *value) { }
 void Substitute_ArrayGet(Expr *&expr, Ident &ident, Expr *value) {
     ArrayGet *array_get = dynamic_cast <ArrayGet*> (expr);
     Substitute(array_get->expr_1, ident, value);

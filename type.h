@@ -92,8 +92,9 @@ void TypeUnify(Constraint &constraint, std::vector < std::pair <Ident, Type*> > 
         TypeUnify(constraint, subst);
         return;
     }
-    
-    if (VarType *var_type = dynamic_cast <VarType*> (t_1)) {
+
+    VarType *var_type = dynamic_cast <VarType*> (t_1);
+    if (var_type && is_meta(var_type->ident_)) {
         bool result = true;
         TypeFree(t_2, var_type->ident_, result);
         if (result) {
@@ -106,8 +107,9 @@ void TypeUnify(Constraint &constraint, std::vector < std::pair <Ident, Type*> > 
             return;
         }
     }
-    
-    if (VarType *var_type = dynamic_cast <VarType*> (t_2)) {
+
+    var_type = dynamic_cast <VarType*> (t_2);
+    if (var_type && is_meta(var_type->ident_)) {
         bool result = true;
         TypeFree(t_1, var_type->ident_, result);
         if (result) {

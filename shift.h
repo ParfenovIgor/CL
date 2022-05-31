@@ -23,6 +23,7 @@ void Shift_RecordGet        (Expr*, int);
 void Shift_Variant          (Expr*, int);
 void Shift_VariantCase      (Expr*, int);
 void Shift_Array            (Expr*, int);
+void Shift_ArrayEmpty       (Expr*, int);
 void Shift_ArrayGet         (Expr*, int);
 void Shift_ArrayPush        (Expr*, int);
 void Shift_ArrayPop         (Expr*, int);
@@ -134,6 +135,9 @@ void Shift(Expr *expr, int shift) {
     }
     if (dynamic_cast <Array*> (expr)) {
         Shift_Array(expr, shift); return;
+    }
+    if (dynamic_cast <ArrayEmpty*> (expr)) {
+        Shift_ArrayEmpty(expr, shift); return;
     }
     if (dynamic_cast <ArrayGet*> (expr)) {
         Shift_ArrayGet(expr, shift); return;
@@ -312,6 +316,7 @@ void Shift_Array(Expr *expr, int shift) {
         Shift(*i, shift);
     }
 }
+void Shift_ArrayEmpty(Expr *expr, int shift) { }
 void Shift_ArrayGet(Expr *expr, int shift) {
     ArrayGet *array_get = dynamic_cast <ArrayGet*> (expr);
     Shift(array_get->expr_1, shift);

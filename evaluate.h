@@ -24,6 +24,7 @@ void Evaluate_RecordGet         (Expr*&, ContextIE&, ContextE&);
 void Evaluate_Variant           (Expr*&, ContextIE&, ContextE&);
 void Evaluate_VariantCase       (Expr*&, ContextIE&, ContextE&);
 void Evaluate_Array             (Expr*&, ContextIE&, ContextE&);
+void Evaluate_ArrayEmpty        (Expr*&, ContextIE&, ContextE&);
 void Evaluate_ArrayGet          (Expr*&, ContextIE&, ContextE&);
 void Evaluate_ArrayPush         (Expr*&, ContextIE&, ContextE&);
 void Evaluate_ArrayPop          (Expr*&, ContextIE&, ContextE&);
@@ -136,6 +137,9 @@ void Evaluate(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
     if (dynamic_cast <Array*> (expr)) {
         Evaluate_Array(expr, context_local, context_ref); return;
     }
+    if (dynamic_cast <ArrayEmpty*> (expr)) {
+        Evaluate_ArrayEmpty(expr, context_local, context_ref); return;
+    }
     if (dynamic_cast <ArrayGet*> (expr)) {
         Evaluate_ArrayGet(expr, context_local, context_ref); return;
     }
@@ -218,9 +222,7 @@ bool ContinueFlag   = false;
 bool ReturnFlag     = false;
 
 void Evaluate_ProgramRoot(ProgramRoot *&program_root, ContextIE &context_local, ContextE &context_ref) {
-    for (ListStatement::iterator i = program_root->liststatement_->begin(); i != program_root->liststatement_->end(); i++) {
-        Evaluate(*i, context_local, context_ref);
-    }
+    Evaluate(program_root->liststatement_, context_local, context_ref);
 }
 void Evaluate_ConstTrue(Expr *&expr, ContextIE &context_local, ContextE &context_ref) { }
 void Evaluate_ConstFalse(Expr *&expr, ContextIE &context_local, ContextE &context_ref) { }
@@ -277,7 +279,6 @@ void Evaluate_Application(Expr *&expr, ContextIE &context_local, ContextE &conte
     
     if (Abstraction *abstraction = dynamic_cast <Abstraction*> (application->expr_1)) {
         size_t context_size = context_local.size();
-        ReturnFlag = false;
         for (ListStatement::iterator i = abstraction->liststatement_->begin(); i != abstraction->liststatement_->end(); i++) {
             std::string str = itos_nl(0);
             Substitute(*i, str, application->expr_2);
@@ -285,6 +286,7 @@ void Evaluate_Application(Expr *&expr, ContextIE &context_local, ContextE &conte
             if (ReturnFlag)
                 break;
         }
+        ReturnFlag = false;
         expr = abstraction->expr_->clone();
         std::string str = itos_nl(0);
         Substitute(expr, str, application->expr_2);
@@ -385,6 +387,10 @@ void Evaluate_Array(Expr *&expr, ContextIE &context_local, ContextE &context_ref
     for (ListExpr::iterator i = array->listexpr_->begin(); i != array->listexpr_->end(); i++) {
         Evaluate(*i, context_local, context_ref);
     }
+}
+void Evaluate_ArrayEmpty(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
+    ArrayEmpty *array_empty = dynamic_cast <ArrayEmpty*> (expr);
+    expr = new Array(new ListExpr());
 }
 void Evaluate_ArrayGet(Expr *&expr, ContextIE &context_local, ContextE &context_ref) {
     ArrayGet *array_get = dynamic_cast <ArrayGet*> (expr);
@@ -707,7 +713,7 @@ void Evaluate_Loop(Statement *&expr, ContextIE &context_local, ContextE &context
         loop = dynamic_cast <Loop*> (expr_);
         Evaluate(loop->liststatement_, context_local, context_ref);
         ContinueFlag = false;
-        if (BreakFlag) {
+        if (BreakFlag || ReturnFlag) {
             BreakFlag = false;
             break;
         }

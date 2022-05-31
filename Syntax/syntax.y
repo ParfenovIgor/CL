@@ -107,6 +107,7 @@ extern int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, yyscan_t scanner);
 %token          _KW_Real       /* Real */
 %token          _KW_Ref        /* Ref */
 %token          _LBRACK        /* [ */
+%token          _SYMB_14       /* \\0 */
 %token          _RBRACK        /* ] */
 %token          _UNDERSCORE    /* _ */
 %token          _KW_as         /* as */
@@ -120,12 +121,12 @@ extern int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, yyscan_t scanner);
 %token          _KW_fix        /* fix */
 %token          _KW_fun        /* fun */
 %token          _KW_get        /* get */
-%token          _SYMB_16       /* i* */
-%token          _SYMB_14       /* i+ */
-%token          _SYMB_15       /* i- */
-%token          _SYMB_17       /* i/ */
-%token          _SYMB_19       /* i< */
-%token          _SYMB_18       /* i= */
+%token          _SYMB_17       /* i* */
+%token          _SYMB_15       /* i+ */
+%token          _SYMB_16       /* i- */
+%token          _SYMB_18       /* i/ */
+%token          _SYMB_20       /* i< */
+%token          _SYMB_19       /* i= */
 %token          _KW_if         /* if */
 %token          _KW_import     /* import */
 %token          _KW_iszero     /* iszero */
@@ -135,12 +136,12 @@ extern int yylex(YYSTYPE *lvalp, YYLTYPE *llocp, yyscan_t scanner);
 %token          _KW_pop        /* pop */
 %token          _KW_pred       /* pred */
 %token          _KW_push       /* push */
-%token          _SYMB_22       /* r* */
-%token          _SYMB_20       /* r+ */
-%token          _SYMB_21       /* r- */
-%token          _SYMB_23       /* r/ */
-%token          _SYMB_25       /* r< */
-%token          _SYMB_24       /* r= */
+%token          _SYMB_23       /* r* */
+%token          _SYMB_21       /* r+ */
+%token          _SYMB_22       /* r- */
+%token          _SYMB_24       /* r/ */
+%token          _SYMB_26       /* r< */
+%token          _SYMB_25       /* r= */
 %token          _KW_readInt    /* readInt */
 %token          _KW_readReal   /* readReal */
 %token          _KW_ref        /* ref */
@@ -214,6 +215,7 @@ Expr8 : _KW_true { $$ = new ConstTrue(); result->expr_ = $$; }
   | _LT _IDENT_ _EQ Expr _GT _KW_as Type { $$ = new Variant($2, $4, $7); result->expr_ = $$; }
   | _KW_case Expr _KW_of ListVariantField_ { std::reverse($4->begin(),$4->end()) ;$$ = new VariantCase($2, $4); result->expr_ = $$; }
   | _LBRACK ListExpr _RBRACK { std::reverse($2->begin(),$2->end()) ;$$ = new Array($2); result->expr_ = $$; }
+  | _SYMB_14 Type { $$ = new ArrayEmpty($2); result->expr_ = $$; }
   | _KW_get _LPAREN Expr _COMMA Expr _RPAREN { $$ = new ArrayGet($3, $5); result->expr_ = $$; }
   | _KW_push _LPAREN Expr _COMMA Expr _RPAREN { $$ = new ArrayPush($3, $5); result->expr_ = $$; }
   | _KW_pop _LPAREN Expr _RPAREN { $$ = new ArrayPop($3); result->expr_ = $$; }
@@ -252,22 +254,22 @@ Expr7 : _KW_ref Expr7 { $$ = new Reference($2); result->expr_ = $$; }
   | _STAR Expr7 { $$ = new Dereference($2); result->expr_ = $$; }
   | Expr8 { $$ = $1; result->expr_ = $$; }
 ;
-Expr5 : Expr5 _SYMB_14 Expr6 { $$ = new AddInt($1, $3); result->expr_ = $$; }
-  | Expr5 _SYMB_15 Expr6 { $$ = new SubInt($1, $3); result->expr_ = $$; }
-  | Expr5 _SYMB_20 Expr6 { $$ = new AddReal($1, $3); result->expr_ = $$; }
-  | Expr5 _SYMB_21 Expr6 { $$ = new SubReal($1, $3); result->expr_ = $$; }
+Expr5 : Expr5 _SYMB_15 Expr6 { $$ = new AddInt($1, $3); result->expr_ = $$; }
+  | Expr5 _SYMB_16 Expr6 { $$ = new SubInt($1, $3); result->expr_ = $$; }
+  | Expr5 _SYMB_21 Expr6 { $$ = new AddReal($1, $3); result->expr_ = $$; }
+  | Expr5 _SYMB_22 Expr6 { $$ = new SubReal($1, $3); result->expr_ = $$; }
   | Expr6 { $$ = $1; result->expr_ = $$; }
 ;
-Expr6 : Expr6 _SYMB_16 Expr7 { $$ = new MulInt($1, $3); result->expr_ = $$; }
-  | Expr6 _SYMB_17 Expr7 { $$ = new DivInt($1, $3); result->expr_ = $$; }
-  | Expr6 _SYMB_22 Expr7 { $$ = new MulReal($1, $3); result->expr_ = $$; }
-  | Expr6 _SYMB_23 Expr7 { $$ = new DivReal($1, $3); result->expr_ = $$; }
+Expr6 : Expr6 _SYMB_17 Expr7 { $$ = new MulInt($1, $3); result->expr_ = $$; }
+  | Expr6 _SYMB_18 Expr7 { $$ = new DivInt($1, $3); result->expr_ = $$; }
+  | Expr6 _SYMB_23 Expr7 { $$ = new MulReal($1, $3); result->expr_ = $$; }
+  | Expr6 _SYMB_24 Expr7 { $$ = new DivReal($1, $3); result->expr_ = $$; }
   | Expr7 { $$ = $1; result->expr_ = $$; }
 ;
-Expr4 : Expr4 _SYMB_18 Expr5 { $$ = new EquInt($1, $3); result->expr_ = $$; }
-  | Expr4 _SYMB_19 Expr5 { $$ = new LesInt($1, $3); result->expr_ = $$; }
-  | Expr4 _SYMB_24 Expr5 { $$ = new EquReal($1, $3); result->expr_ = $$; }
-  | Expr4 _SYMB_25 Expr5 { $$ = new LesReal($1, $3); result->expr_ = $$; }
+Expr4 : Expr4 _SYMB_19 Expr5 { $$ = new EquInt($1, $3); result->expr_ = $$; }
+  | Expr4 _SYMB_20 Expr5 { $$ = new LesInt($1, $3); result->expr_ = $$; }
+  | Expr4 _SYMB_25 Expr5 { $$ = new EquReal($1, $3); result->expr_ = $$; }
+  | Expr4 _SYMB_26 Expr5 { $$ = new LesReal($1, $3); result->expr_ = $$; }
   | Expr5 { $$ = $1; result->expr_ = $$; }
 ;
 ListAbstractionField_ : /* empty */ { $$ = new ListAbstractionField_(); result->listabstractionfield__ = $$; }

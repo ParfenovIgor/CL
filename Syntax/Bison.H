@@ -76,63 +76,64 @@ extern int syntax_debug;
     _KW_Real = 277,                /* _KW_Real  */
     _KW_Ref = 278,                 /* _KW_Ref  */
     _LBRACK = 279,                 /* _LBRACK  */
-    _RBRACK = 280,                 /* _RBRACK  */
-    _UNDERSCORE = 281,             /* _UNDERSCORE  */
-    _KW_as = 282,                  /* _KW_as  */
-    _KW_break = 283,               /* _KW_break  */
-    _KW_case = 284,                /* _KW_case  */
-    _KW_continue = 285,            /* _KW_continue  */
-    _KW_def = 286,                 /* _KW_def  */
-    _KW_else = 287,                /* _KW_else  */
-    _KW_eval = 288,                /* _KW_eval  */
-    _KW_false = 289,               /* _KW_false  */
-    _KW_fix = 290,                 /* _KW_fix  */
-    _KW_fun = 291,                 /* _KW_fun  */
-    _KW_get = 292,                 /* _KW_get  */
-    _SYMB_16 = 293,                /* _SYMB_16  */
-    _SYMB_14 = 294,                /* _SYMB_14  */
+    _SYMB_14 = 280,                /* _SYMB_14  */
+    _RBRACK = 281,                 /* _RBRACK  */
+    _UNDERSCORE = 282,             /* _UNDERSCORE  */
+    _KW_as = 283,                  /* _KW_as  */
+    _KW_break = 284,               /* _KW_break  */
+    _KW_case = 285,                /* _KW_case  */
+    _KW_continue = 286,            /* _KW_continue  */
+    _KW_def = 287,                 /* _KW_def  */
+    _KW_else = 288,                /* _KW_else  */
+    _KW_eval = 289,                /* _KW_eval  */
+    _KW_false = 290,               /* _KW_false  */
+    _KW_fix = 291,                 /* _KW_fix  */
+    _KW_fun = 292,                 /* _KW_fun  */
+    _KW_get = 293,                 /* _KW_get  */
+    _SYMB_17 = 294,                /* _SYMB_17  */
     _SYMB_15 = 295,                /* _SYMB_15  */
-    _SYMB_17 = 296,                /* _SYMB_17  */
-    _SYMB_19 = 297,                /* _SYMB_19  */
-    _SYMB_18 = 298,                /* _SYMB_18  */
-    _KW_if = 299,                  /* _KW_if  */
-    _KW_import = 300,              /* _KW_import  */
-    _KW_iszero = 301,              /* _KW_iszero  */
-    _KW_len = 302,                 /* _KW_len  */
-    _KW_loop = 303,                /* _KW_loop  */
-    _KW_of = 304,                  /* _KW_of  */
-    _KW_pop = 305,                 /* _KW_pop  */
-    _KW_pred = 306,                /* _KW_pred  */
-    _KW_push = 307,                /* _KW_push  */
-    _SYMB_22 = 308,                /* _SYMB_22  */
-    _SYMB_20 = 309,                /* _SYMB_20  */
+    _SYMB_16 = 296,                /* _SYMB_16  */
+    _SYMB_18 = 297,                /* _SYMB_18  */
+    _SYMB_20 = 298,                /* _SYMB_20  */
+    _SYMB_19 = 299,                /* _SYMB_19  */
+    _KW_if = 300,                  /* _KW_if  */
+    _KW_import = 301,              /* _KW_import  */
+    _KW_iszero = 302,              /* _KW_iszero  */
+    _KW_len = 303,                 /* _KW_len  */
+    _KW_loop = 304,                /* _KW_loop  */
+    _KW_of = 305,                  /* _KW_of  */
+    _KW_pop = 306,                 /* _KW_pop  */
+    _KW_pred = 307,                /* _KW_pred  */
+    _KW_push = 308,                /* _KW_push  */
+    _SYMB_23 = 309,                /* _SYMB_23  */
     _SYMB_21 = 310,                /* _SYMB_21  */
-    _SYMB_23 = 311,                /* _SYMB_23  */
-    _SYMB_25 = 312,                /* _SYMB_25  */
-    _SYMB_24 = 313,                /* _SYMB_24  */
-    _KW_readInt = 314,             /* _KW_readInt  */
-    _KW_readReal = 315,            /* _KW_readReal  */
-    _KW_ref = 316,                 /* _KW_ref  */
-    _KW_ret = 317,                 /* _KW_ret  */
-    _KW_return = 318,              /* _KW_return  */
-    _KW_succ = 319,                /* _KW_succ  */
-    _KW_then = 320,                /* _KW_then  */
-    _KW_toInt = 321,               /* _KW_toInt  */
-    _KW_toReal = 322,              /* _KW_toReal  */
-    _KW_true = 323,                /* _KW_true  */
-    _KW_typedef = 324,             /* _KW_typedef  */
-    _KW_uni = 325,                 /* _KW_uni  */
-    _KW_where = 326,               /* _KW_where  */
-    _KW_writeInt = 327,            /* _KW_writeInt  */
-    _KW_writeReal = 328,           /* _KW_writeReal  */
-    _LBRACE = 329,                 /* _LBRACE  */
-    _BAR = 330,                    /* _BAR  */
-    _RBRACE = 331,                 /* _RBRACE  */
-    _SYMB_6 = 332,                 /* _SYMB_6  */
-    _STRING_ = 333,                /* _STRING_  */
-    _INTEGER_ = 334,               /* _INTEGER_  */
-    _DOUBLE_ = 335,                /* _DOUBLE_  */
-    _IDENT_ = 336                  /* _IDENT_  */
+    _SYMB_22 = 311,                /* _SYMB_22  */
+    _SYMB_24 = 312,                /* _SYMB_24  */
+    _SYMB_26 = 313,                /* _SYMB_26  */
+    _SYMB_25 = 314,                /* _SYMB_25  */
+    _KW_readInt = 315,             /* _KW_readInt  */
+    _KW_readReal = 316,            /* _KW_readReal  */
+    _KW_ref = 317,                 /* _KW_ref  */
+    _KW_ret = 318,                 /* _KW_ret  */
+    _KW_return = 319,              /* _KW_return  */
+    _KW_succ = 320,                /* _KW_succ  */
+    _KW_then = 321,                /* _KW_then  */
+    _KW_toInt = 322,               /* _KW_toInt  */
+    _KW_toReal = 323,              /* _KW_toReal  */
+    _KW_true = 324,                /* _KW_true  */
+    _KW_typedef = 325,             /* _KW_typedef  */
+    _KW_uni = 326,                 /* _KW_uni  */
+    _KW_where = 327,               /* _KW_where  */
+    _KW_writeInt = 328,            /* _KW_writeInt  */
+    _KW_writeReal = 329,           /* _KW_writeReal  */
+    _LBRACE = 330,                 /* _LBRACE  */
+    _BAR = 331,                    /* _BAR  */
+    _RBRACE = 332,                 /* _RBRACE  */
+    _SYMB_6 = 333,                 /* _SYMB_6  */
+    _STRING_ = 334,                /* _STRING_  */
+    _INTEGER_ = 335,               /* _INTEGER_  */
+    _DOUBLE_ = 336,                /* _DOUBLE_  */
+    _IDENT_ = 337                  /* _IDENT_  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -167,7 +168,7 @@ union YYSTYPE
   ListVariantTypeField_* listvarianttypefield__;
   VariantTypeField_* varianttypefield__;
 
-#line 171 "Bison.H"
+#line 172 "Bison.H"
 
 };
 typedef union YYSTYPE YYSTYPE;

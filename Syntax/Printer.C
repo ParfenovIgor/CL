@@ -307,6 +307,18 @@ void PrintAbsyn::visitArray(Array *p)
   _i_ = oldi;
 }
 
+void PrintAbsyn::visitArrayEmpty(ArrayEmpty *p)
+{
+  int oldi = _i_;
+  if (oldi > 8) render(_L_PAREN);
+
+  render("\\0");
+  _i_ = 0; p->type_->accept(this);
+
+  if (oldi > 8) render(_R_PAREN);
+  _i_ = oldi;
+}
+
 void PrintAbsyn::visitArrayGet(ArrayGet *p)
 {
   int oldi = _i_;
@@ -1546,6 +1558,16 @@ void ShowAbsyn::visitArray(Array *p)
   if (p->listexpr_)  p->listexpr_->accept(this);
   bufAppend(']');
   bufAppend(' ');
+  bufAppend(')');
+}
+void ShowAbsyn::visitArrayEmpty(ArrayEmpty *p)
+{
+  bufAppend('(');
+  bufAppend("ArrayEmpty");
+  bufAppend(' ');
+  bufAppend('[');
+  if (p->type_)  p->type_->accept(this);
+  bufAppend(']');
   bufAppend(')');
 }
 void ShowAbsyn::visitArrayGet(ArrayGet *p)

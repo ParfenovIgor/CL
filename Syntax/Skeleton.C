@@ -245,6 +245,14 @@ void Skeleton::visitArray(Array *array)
 
 }
 
+void Skeleton::visitArrayEmpty(ArrayEmpty *array_empty)
+{
+  /* Code For ArrayEmpty Goes Here */
+
+  if (array_empty->type_) array_empty->type_->accept(this);
+
+}
+
 void Skeleton::visitArrayGet(ArrayGet *array_get)
 {
   /* Code For ArrayGet Goes Here */

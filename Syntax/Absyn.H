@@ -57,6 +57,7 @@ class RecordGet;
 class Variant;
 class VariantCase;
 class Array;
+class ArrayEmpty;
 class ArrayGet;
 class ArrayPush;
 class ArrayPop;
@@ -163,6 +164,7 @@ public:
   virtual void visitVariant(Variant *p) = 0;
   virtual void visitVariantCase(VariantCase *p) = 0;
   virtual void visitArray(Array *p) = 0;
+  virtual void visitArrayEmpty(ArrayEmpty *p) = 0;
   virtual void visitArrayGet(ArrayGet *p) = 0;
   virtual void visitArrayPush(ArrayPush *p) = 0;
   virtual void visitArrayPop(ArrayPop *p) = 0;
@@ -697,6 +699,20 @@ public:
   virtual void accept(Visitor *v);
   virtual Array *clone() const;
   void swap(Array &);
+};
+
+class ArrayEmpty : public Expr
+{
+public:
+  Type *type_;
+
+  ArrayEmpty(const ArrayEmpty &);
+  ArrayEmpty &operator=(const ArrayEmpty &);
+  ArrayEmpty(Type *p1);
+  ~ArrayEmpty();
+  virtual void accept(Visitor *v);
+  virtual ArrayEmpty *clone() const;
+  void swap(ArrayEmpty &);
 };
 
 class ArrayGet : public Expr

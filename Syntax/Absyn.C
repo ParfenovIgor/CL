@@ -1207,6 +1207,50 @@ Array *Array::clone() const
 
 
 
+/********************   ArrayEmpty    ********************/
+ArrayEmpty::ArrayEmpty(Type *p1)
+{
+  type_ = p1;
+
+}
+
+ArrayEmpty::ArrayEmpty(const ArrayEmpty & other)
+{
+  type_ = other.type_->clone();
+
+}
+
+ArrayEmpty &ArrayEmpty::operator=(const ArrayEmpty & other)
+{
+  ArrayEmpty tmp(other);
+  swap(tmp);
+  return *this;
+}
+
+void ArrayEmpty::swap(ArrayEmpty & other)
+{
+  std::swap(type_, other.type_);
+
+}
+
+ArrayEmpty::~ArrayEmpty()
+{
+  delete(type_);
+
+}
+
+void ArrayEmpty::accept(Visitor *v)
+{
+  v->visitArrayEmpty(this);
+}
+
+ArrayEmpty *ArrayEmpty::clone() const
+{
+  return new ArrayEmpty(*this);
+}
+
+
+
 /********************   ArrayGet    ********************/
 ArrayGet::ArrayGet(Expr *p1, Expr *p2)
 {
