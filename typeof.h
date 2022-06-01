@@ -471,7 +471,7 @@ void TypeOf_Variant(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT 
         throw "Type Error: Variant has no such key";
     }
     else {
-        throw "Type Error: Variant type annotation is not VariantType";
+        throw "Type Error: Variant type annotation is not Variant Type";
     }
 }
 void TypeOf_VariantCase(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
@@ -531,8 +531,13 @@ void TypeOf_Array(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &c
 }
 void TypeOf_ArrayEmpty(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     ArrayEmpty *array_empty = dynamic_cast <ArrayEmpty*> (expr);
-    TypeToNameless(array_empty->type_, context_type);
-    type = array_empty->type_->clone();
+    if (ArrayType *array_type = dynamic_cast <ArrayType*> (array_empty->type_)) {
+        TypeToNameless(array_empty->type_, context_type);
+        type = array_empty->type_->clone();
+    }
+    else {
+        throw "Type Error: Array Empty type annotation is not Array Type";
+    }
 }
 void TypeOf_ArrayGet(Expr *expr, Type *&type, ContextIT &context_expr, ContextIT &context_local, ContextIT &context_type, Constraint &constraint, int &var_num) {
     ArrayGet *array_get = dynamic_cast <ArrayGet*> (expr);
