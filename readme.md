@@ -7,7 +7,7 @@ An interpreter for CL language working on Linux OS only. Built and used on Ubunt
 ## How to run
 
 The repository contains the built interpreter. Run cli with path to source file to start interpreting.
-Example `.cli file`
+Example `./cli file`
 
 ## How to Compile
 
